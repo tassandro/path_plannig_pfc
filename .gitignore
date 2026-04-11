@@ -17,3 +17,7 @@ build/
 
 # Output
 output/
+
+# Data (large image / point-cloud files)
+data/
+*.zip

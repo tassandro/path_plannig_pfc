@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from .image_drawing_processor import ImageDrawingPostProcessor
 from .interfaces import PostProcessor
+from .simple_waypoint_processor import SimpleWaypointProcessor
 
 
 class PostProcessorFactory:
@@ -34,3 +36,7 @@ class PostProcessorFactory:
     @classmethod
     def available(cls) -> list[str]:
         return list(cls._registry.keys())
+
+
+PostProcessorFactory.register("simple_waypoint", SimpleWaypointProcessor)
+PostProcessorFactory.register("image_drawing", ImageDrawingPostProcessor)

@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from .a_star import AStarAlgorithm
+from .bfs import BFSAlgorithm
+from .dfs import DFSAlgorithm
+from .dijkstra import DijkstraAlgorithm
 from .interfaces import PathAlgorithm
 
 
@@ -34,3 +38,9 @@ class AlgorithmFactory:
     @classmethod
     def available(cls) -> list[str]:
         return list(cls._registry.keys())
+
+
+AlgorithmFactory.register("a_star", AStarAlgorithm)
+AlgorithmFactory.register("dijkstra", DijkstraAlgorithm)
+AlgorithmFactory.register("bfs", BFSAlgorithm)
+AlgorithmFactory.register("dfs", DFSAlgorithm)

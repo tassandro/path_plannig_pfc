@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from data_ingestion.interfaces import IngestedData
 
+from .grid_image_parser import GridImageGraphParser
 from .interfaces import GraphParser
+from .segmented_image_parser import SegmentedImageGraphParser
 
 
 class GraphParserFactory:
@@ -36,3 +38,7 @@ class GraphParserFactory:
     @classmethod
     def available(cls) -> list[str]:
         return list(cls._registry.keys())
+
+
+GraphParserFactory.register("grid_image", GridImageGraphParser)
+GraphParserFactory.register("segmented_image", SegmentedImageGraphParser)
