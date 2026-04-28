@@ -1,0 +1,605 @@
+% ==========================================================================
+%  PFC — Planejamento de Trajetória para Robô Terrestre por meio de
+%         Segmentação Semântica e Otimização em Grafos
+%  Autores: Gabriel Dias Vilela e Tassandro Cavalcante Leitão
+%  Instituto Militar de Engenharia — 2026
+% ==========================================================================
+\documentclass[
+    12pt,
+    openright,
+    oneside,
+    a4paper,
+    english,
+    brazil
+]{abntex2}
+
+% ── Pacotes ──────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[brazilian,hyperpageref]{backref}
+\usepackage[alf]{abntex2cite}
+
+% ── Configuração de listings para Python ─────────────────────────────────
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red},
+    commentstyle=\color{gray}\itshape,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    breaklines=true,
+    frame=single,
+    captionpos=b,
+}
+
+% ── Dados do documento ───────────────────────────────────────────────────
+\titulo{Planejamento de Trajetória para Robô Terrestre por meio de Segmentação Semântica e Otimização em Grafos}
+\autor{Gabriel Dias Vilela \and Tassandro Cavalcante Leitão}
+\local{Rio de Janeiro}
+\data{2026}
+\orientador{Claudia Marcela Justel, D.Sc.}
+\coorientador{Paulo Fernando Ferreira Rosa, Ph.D.}
+\instituicao{%
+    MINISTÉRIO DA DEFESA\\
+    EXÉRCITO BRASILEIRO\\
+    DEPARTAMENTO DE CIÊNCIA E TECNOLOGIA\\
+    INSTITUTO MILITAR DE ENGENHARIA\\
+    CURSO DE GRADUAÇÃO EM ENGENHARIA DA COMPUTAÇÃO
+}
+\tipotrabalho{Projeto de Final de Curso}
+\preambulo{Projeto de Final de Curso apresentado ao Curso de Graduação em Engenharia da Computação do Instituto Militar de Engenharia, como requisito parcial para a obtenção do título de Bacharel em Engenharia da Computação.}
+
+% ==========================================================================
+\begin{document}
+
+\selectlanguage{brazil}
+\frenchspacing
+
+% ══════════════════════════════════════════════════════════════════════════
+%  ELEMENTOS PRÉ-TEXTUAIS
+% ══════════════════════════════════════════════════════════════════════════
+\pretextual
+
+% ── Capa ─────────────────────────────────────────────────────────────────
+\begin{capa}
+    \center
+    \ABNTEXchapterfont
+
+    {\normalsize
+    MINISTÉRIO DA DEFESA\\
+    EXÉRCITO BRASILEIRO\\
+    DEPARTAMENTO DE CIÊNCIA E TECNOLOGIA\\
+    INSTITUTO MILITAR DE ENGENHARIA\\
+    CURSO DE GRADUAÇÃO EM ENGENHARIA DA COMPUTAÇÃO}
+
+    \vspace*{2cm}
+
+    {\large GABRIEL DIAS VILELA}\\
+    {\large TASSANDRO CAVALCANTE LEITÃO}
+
+    \vspace*{3cm}
+
+    {\Large\bfseries PLANEJAMENTO DE TRAJETÓRIA PARA ROBÔ TERRESTRE POR MEIO DE SEGMENTAÇÃO SEMÂNTICA E OTIMIZAÇÃO EM GRAFOS}
+
+    \vfill
+
+    {\large RIO DE JANEIRO}\\
+    {\large 2026}
+\end{capa}
+
+% ── Folha de rosto ───────────────────────────────────────────────────────
+\begin{folhaderosto}
+    \center
+    {\large GABRIEL DIAS VILELA}\\
+    {\large TASSANDRO CAVALCANTE LEITÃO}
+
+    \vspace*{3cm}
+
+    {\Large\bfseries PLANEJAMENTO DE TRAJETÓRIA PARA ROBÔ TERRESTRE POR MEIO DE SEGMENTAÇÃO SEMÂNTICA E OTIMIZAÇÃO EM GRAFOS}
+
+    \vspace*{2cm}
+
+    \hspace{.45\textwidth}
+    \begin{minipage}{.5\textwidth}
+        \imprimirpreambulo\\[1em]
+        Orientador(es): Claudia Marcela Justel, D.Sc.\\
+        Paulo Fernando Ferreira Rosa, Ph.D.
+    \end{minipage}
+
+    \vfill
+
+    {\large Rio de Janeiro}\\
+    {\large 2026}
+\end{folhaderosto}
+
+% ── Ficha catalográfica ─────────────────────────────────────────────────
+\begin{fichacatalografica}
+    \vspace*{\fill}
+    \begin{center}
+    {\normalsize \copyright 2026\\
+    INSTITUTO MILITAR DE ENGENHARIA\\
+    Praça General Tibúrcio, 80 -- Praia Vermelha\\
+    Rio de Janeiro -- RJ CEP: 22290-270}
+    \end{center}
+
+    \vspace{1cm}
+
+    \noindent Este exemplar é de propriedade do Instituto Militar de Engenharia, que poderá incluí-lo em base de dados, armazenar em computador, microfilmar ou adotar qualquer forma de arquivamento.
+
+    É permitida a menção, reprodução parcial ou integral e a transmissão entre bibliotecas deste trabalho, sem modificação de seu texto, em qualquer meio que esteja ou venha a ser fixado, para pesquisa acadêmica, comentários e citações, desde que sem finalidade comercial e que seja feita a referência bibliográfica completa.
+
+    Os conceitos expressos neste trabalho são de responsabilidade do(s) autor(es) e do(s) orientador(es).
+
+    \vspace{1cm}
+
+    \noindent
+    Dias Vilela, Gabriel; Cavalcante Leitão, Tassandro.\\
+    Planejamento de trajetória para robô terrestre por meio de segmentação semântica e otimização em grafos / Gabriel Dias Vilela e Tassandro Cavalcante Leitão. -- Rio de Janeiro, 2026.\\
+    XX f.\\[0.5em]
+    Orientador(es): Claudia Marcela Justel e Paulo Fernando Ferreira Rosa.\\[0.5em]
+    Projeto de Final de Curso (graduação) -- Instituto Militar de Engenharia, Engenharia da Computação, 2026.\\[0.5em]
+    1.~Veículos terrestres não tripulados. 2.~Segmentação semântica. 3.~Algoritmos baseados em grafos. 4.~Planejamento de trajetórias. 5.~Aprendizado de máquina. i.~Justel, Claudia Marcela (orient.) ii.~Ferreira Rosa, Paulo Fernando (orient.) iii.~Título
+    \vspace*{\fill}
+\end{fichacatalografica}
+
+% ── Folha de aprovação ──────────────────────────────────────────────────
+\begin{folhadeaprovacao}
+    \center
+
+    {\large GABRIEL DIAS VILELA}\\
+    {\large TASSANDRO CAVALCANTE LEITÃO}
+
+    \vspace{1cm}
+
+    {\large\bfseries Planejamento de trajetória para robô terrestre por meio de segmentação semântica e otimização em grafos}
+
+    \vspace{1cm}
+
+    Projeto de Final de Curso apresentado ao Curso de Graduação em Engenharia da Computação do Instituto Militar de Engenharia, como requisito parcial para a obtenção do título de Bacharel em Engenharia da Computação.
+
+    \vspace{0.5cm}
+
+    Orientador(es): Claudia Marcela Justel e Paulo Fernando Ferreira Rosa.
+
+    \vspace{0.5cm}
+
+    Aprovada em \_\_\_ de \_\_\_\_\_\_\_\_\_\_\_ de 2026, pela seguinte banca examinadora:
+
+    \vspace{1.5cm}
+
+    \assinatura{Prof. Paulo Fernando Ferreira Rosa -- Professor do IME -- Presidente}
+    \assinatura{Profa. Claudia Marcela Justel -- Professora do IME}
+    \assinatura{Membro 3 -- Instituição}
+    \assinatura{Membro 4 -- Instituição}
+    \assinatura{Membro 5 -- Instituição}
+
+    \vfill
+
+    {\large Rio de Janeiro}\\
+    {\large 2026}
+\end{folhadeaprovacao}
+
+% ── Dedicatória ──────────────────────────────────────────────────────────
+\begin{dedicatoria}
+    \vspace*{\fill}
+    \centering
+    \noindent
+    \textit{Às nossas famílias.}
+    \vspace*{\fill}
+\end{dedicatoria}
+
+% ── Agradecimentos ──────────────────────────────────────────────────────
+\begin{agradecimentos}
+Os agradecimentos principais são direcionados aos nossos orientadores por todo acompanhamento e ensinamentos. Agradecemos também aos autores do projeto anterior, João Vitor Camelo de Almeida e Thiago Calheiros de Souza Barbosa, cujo trabalho serviu de base e inspiração para o presente projeto.
+\end{agradecimentos}
+
+% ── Epígrafe ─────────────────────────────────────────────────────────────
+\begin{epigrafe}
+    \vspace*{\fill}
+    \begin{flushright}
+        \textit{``Não vos amoldeis às estruturas deste mundo,\\
+        mas transformai-vos pela renovação da mente,\\
+        a fim de distinguir qual é a vontade de Deus:\\
+        o que é bom, o que Lhe é agradável, o que é perfeito.''}\\
+        (Bíblia Sagrada, Romanos 12, 2)
+    \end{flushright}
+\end{epigrafe}
+
+% ── Resumo ───────────────────────────────────────────────────────────────
+\setlength{\absparsep}{18pt}
+\begin{resumo}
+Este projeto dá continuidade ao trabalho de planejamento de trajetória para veículos terrestres não tripulados desenvolvido em 2025, estendendo-o em três frentes principais: (i)~a adoção de uma arquitetura de \textit{software} orientada a objetos e modular, organizada em quatro estágios encadeados --- ingestão de dados, construção de grafos, algoritmos de caminho mínimo e pós-processamento; (ii)~a incorporação de técnicas de segmentação semântica baseadas em aprendizado profundo, nomeadamente DeepLabV3+ e Segformer (ADE20K, 150~classes), para identificação automática de regiões transitáveis em imagens aéreas reais de drones, incluindo normalização de sombras por CLAHE e limpeza morfológica de máscaras; e (iii)~a implementação de uma interface gráfica interativa que permite a seleção de imagens, definição de pontos de origem e destino por clique, ajuste de hiperparâmetros e execução da \textit{pipeline} completa com visualização dos resultados. Os algoritmos A*, Dijkstra, BFS e DFS foram reimplementados sobre uma representação genérica de grafo com matrizes esparsas, \textit{edge index} e \textit{embeddings} de nós e arestas. Os experimentos conduzidos sobre imagens RGB do Forte da Glória demonstram que a abordagem proposta é capaz de segmentar terrenos complexos e gerar caminhos ótimos ponderados, contribuindo para a evolução do planejamento de trajetórias no contexto do projeto SVTRP do CTEx.
+
+\textbf{Palavras-chave}: Veículos terrestres não tripulados; Segmentação semântica; Algoritmos baseados em grafos; Planejamento de trajetórias; Aprendizado de máquina.
+\end{resumo}
+
+% ── Abstract ─────────────────────────────────────────────────────────────
+\begin{resumo}[Abstract]
+\begin{otherlanguage*}{english}
+This project continues the trajectory planning work for unmanned ground vehicles developed in 2025, extending it in three main directions: (i)~an object-oriented, modular software architecture organized into four chained stages---data ingestion, graph construction, shortest-path algorithms, and post-processing; (ii)~the incorporation of deep-learning-based semantic segmentation techniques, namely DeepLabV3+ and Segformer (ADE20K, 150~classes), for automatic identification of traversable regions in real drone aerial images, including CLAHE shadow normalization and morphological mask cleanup; and (iii)~an interactive graphical interface allowing image selection, click-based start/end point definition, hyperparameter tuning, and full pipeline execution with result visualization. The A*, Dijkstra, BFS, and DFS algorithms were reimplemented over a generic graph representation using sparse matrices, edge indices, and node/edge embeddings. Experiments conducted on RGB images from Forte da Glória demonstrate that the proposed approach can segment complex terrains and generate optimal weighted paths, contributing to the evolution of trajectory planning within the CTEx SVTRP project.
+
+\textbf{Keywords}: Unmanned ground vehicles; Semantic segmentation; Graph-based algorithms; Trajectory planning; Machine learning.
+\end{otherlanguage*}
+\end{resumo}
+
+% ── Listas ───────────────────────────────────────────────────────────────
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\cleardoublepage
+
+\pdfbookmark[0]{\listtablename}{lot}
+\listoftables*
+\cleardoublepage
+
+% ── Lista de abreviaturas ───────────────────────────────────────────────
+\begin{siglas}
+    \item[ADE20K] Dataset de segmentação semântica com 150 classes
+    \item[BFS] Breadth-First Search
+    \item[CLAHE] Contrast Limited Adaptive Histogram Equalization
+    \item[CNN] Convolutional Neural Network
+    \item[CTEx] Centro Tecnológico do Exército
+    \item[DFS] Depth-First Search
+    \item[EB] Exército Brasileiro
+    \item[GUI] Graphical User Interface
+    \item[HSV] Hue, Saturation, Value
+    \item[IA] Inteligência Artificial
+    \item[LAB] Lightness, A-channel, B-channel (espaço de cor)
+    \item[OOP] Object-Oriented Programming
+    \item[RRT] Rapidly-exploring Random Tree
+    \item[SVTRP] Sistemas de Veículos Terrestres Remotamente Pilotados
+    \item[UAV] Unmanned Aerial Vehicle
+    \item[UGV] Unmanned Ground Vehicle
+    \item[VOC] Visual Object Classes (dataset Pascal VOC)
+\end{siglas}
+
+% ── Sumário ──────────────────────────────────────────────────────────────
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+
+% ══════════════════════════════════════════════════════════════════════════
+%  ELEMENTOS TEXTUAIS
+% ══════════════════════════════════════════════════════════════════════════
+\textual
+
+% ======================================================================
+\chapter{INTRODUÇÃO}
+% ======================================================================
+
+Os avanços tecnológicos envolvendo visão computacional, eletrônica e inteligência artificial, entre outras áreas correlatas, impulsionaram a tendência de desenvolvimento e uso de ferramentas que automatizam as disputas em ambientes de combate. Nesse sentido, com a possibilidade de aumentar a eficácia operacional e reduzir a participação e desgaste humano --- física, cognitiva e psicologicamente --- no campo de batalha, a integração de robôs autônomos nesses cenários de confronto é iminente e torna-se motivo de vantagem tática e estratégica.
+
+Em relação à autonomia desses sistemas, o planejamento de trajetória de robôs terrestres é uma das tarefas essenciais a ser realizada e ela se encontra dentro de um escopo multidisciplinar que inclui conhecimentos em diversas áreas de grande complexidade, como a robótica e a teoria dos grafos. Essas disciplinas convergem na modelagem do cenário de combate como um grafo, no qual os nós representam as posições transitáveis pelos robôs no mapa e as arestas definem os caminhos. Dessa maneira, algoritmos de busca e otimização são ferramentas que guiam o planejamento das possíveis rotas, auxiliando na coordenação entre pontos e adaptação aos obstáculos.
+
+A pesquisa ``Cooperação Entre Plataformas Terrestres e Aéreas para Aquisição, Rastreamento e Perseguição de Alvos, Utilizando Visão Computacional e Inteligência Artificial'' \cite{junior2024} que se encontra em fase de desenvolvimento no laboratório LIARC, iniciada em 2023 pelo Major Fábio Luiz Junior, aborda o emprego de plataformas robóticas aéreas (UAV) e terrestres (UGV) em ambientes de batalha e como essas duas estruturas podem trabalhar em conjunto para otimizar e ampliar o poder de ataque e estratégico militar.
+
+\subsection*{Contribuições do Projeto Anterior}
+
+O presente projeto é uma continuação direta do trabalho ``Planejamento de Trajetória para Robô Terrestre, Utilizando Otimização em Grafos'', desenvolvido em 2025 por Camelo de Almeida e Calheiros de Souza Barbosa \cite{camelo2025}. Naquele trabalho, os autores propuseram uma abordagem baseada em grafos para o planejamento de caminhos sobre imagens aéreas segmentadas semanticamente, implementando os algoritmos de Dijkstra e A* e comparando-os com o algoritmo estocástico RRT.
+
+As principais conclusões do projeto de 2025 foram:
+\begin{itemize}
+    \item Os algoritmos baseados em grafos (Dijkstra e A*) apresentaram desempenho mais consistente, confiável e previsível em relação ao RRT, destacando-se pelo determinismo e pela garantia de otimalidade das soluções;
+    \item O algoritmo A* mostrou-se ligeiramente mais rápido que o Dijkstra, explorando um menor número de nós, sendo considerado mais adequado ao problema proposto;
+    \item A inserção de pesos nas arestas do grafo, com base na proximidade a obstáculos, produziu caminhos mais realistas que se distanciam de regiões de risco, sem impacto significativo no tempo de execução;
+    \item O RRT apresentou dificuldades em imagens com áreas transitáveis estreitas, excedendo o tempo limite em dois dos cinco cenários testados;
+    \item A abordagem proposta, ao integrar segmentação semântica de imagens e planejamento baseado em grafos, constitui uma alternativa promissora para aplicações em veículos autônomos.
+\end{itemize}
+
+Como perspectivas futuras, aquele trabalho identificou a necessidade de: (i)~tratamento de ambientes dinâmicos com algoritmos como o D*; (ii)~avaliação do impacto do uso de grafos em situações de composição de imagens em tempo real; e (iii)~extensão da segmentação semântica para lidar com uma maior variedade de terrenos.
+
+É neste último ponto que o presente projeto se concentra com maior ênfase, ao incorporar técnicas modernas de segmentação semântica baseadas em aprendizado profundo, especificamente os modelos Segformer (ADE20K, 150 classes) e DeepLabV3+ (Pascal VOC), capazes de classificar uma ampla gama de tipos de terreno diretamente a partir de imagens RGB reais de drones, eliminando a dependência de imagens pré-segmentadas. Além disso, propõe-se uma arquitetura de \textit{software} modular e extensível, e uma interface gráfica interativa para facilitar a experimentação e análise dos resultados.
+
+% ── 1.1 ──────────────────────────────────────────────────────────────────
+\section{Motivação e Justificativa}
+
+O presente projeto busca dar continuidade e aprofundar o estudo de planejamento de rotas abordado em \cite{camelo2025} e \cite{junior2024} e, que por sua vez, poderá ser aproveitado e aplicado no projeto estratégico ``Sistemas de Veículos Terrestres Remotamente Pilotados'' (SVTRP), conduzido pelo Centro Tecnológico do Exército (CTEx), visando a uma potencialização de seu funcionamento.
+
+O projeto anterior demonstrou a viabilidade da abordagem baseada em grafos, porém dependia de imagens previamente segmentadas por redes neurais externas. A necessidade de integrar o processo de segmentação diretamente no \textit{pipeline} de planejamento, utilizando modelos mais robustos e capazes de lidar com a diversidade de terrenos encontrados em imagens reais de drones, constitui a principal motivação deste trabalho.
+
+Adicionalmente, a construção de uma arquitetura modular orientada a objetos possibilita a fácil incorporação de novos algoritmos, representações de grafos e métodos de pré-processamento, facilitando a evolução contínua do sistema.
+
+% ── 1.2 ──────────────────────────────────────────────────────────────────
+\section{Objetivos}
+
+O principal objetivo deste Projeto de Final de Curso consiste em estender o sistema de planejamento de trajetória desenvolvido em \cite{camelo2025}, incorporando segmentação semântica automatizada e uma arquitetura de \textit{software} modular.
+
+Para atingir o objetivo principal, foram definidos os seguintes objetivos específicos:
+\begin{itemize}
+    \item Projetar e implementar uma arquitetura orientada a objetos composta por quatro módulos encadeados: ingestão de dados, construção de grafos, algoritmos e pós-processamento;
+    \item Implementar técnicas de segmentação semântica baseadas em aprendizado profundo (Segformer ADE20K e DeepLabV3+) para identificação automática de regiões transitáveis em imagens aéreas reais;
+    \item Reimplementar os algoritmos A*, Dijkstra, BFS e DFS sobre uma representação genérica de grafo com suporte a matrizes esparsas;
+    \item Desenvolver uma interface gráfica interativa para seleção de imagens, definição de pontos por clique e ajuste de hiperparâmetros; e
+    \item Executar testes comparativos sobre imagens RGB reais obtidas por drone no Forte da Glória.
+\end{itemize}
+
+% ── 1.3 ──────────────────────────────────────────────────────────────────
+\section{Metodologia}
+
+Visando alcançar os objetivos propostos, a metodologia adotada consiste nas seguintes etapas:
+
+Inicialmente, foi conduzida uma revisão do projeto anterior \cite{camelo2025} e da literatura relacionada a segmentação semântica de imagens aéreas e planejamento de trajetórias.
+
+Em seguida, projetou-se a arquitetura modular do sistema, definindo interfaces abstratas (\textit{Abstract Base Classes}) e padrões de fábrica (\textit{Factory Pattern}) para cada estágio do \textit{pipeline}: \texttt{data\_ingestion}, \texttt{graph\_parsing}, \texttt{algorithm} e \texttt{post\_processing}.
+
+Na etapa de implementação, os algoritmos A*, Dijkstra, BFS e DFS foram reimplementados sobre a nova representação genérica de grafo.
+
+Desenvolveu-se uma interface gráfica interativa baseada na biblioteca Gradio, permitindo a execução integral do \textit{pipeline} com visualização dos resultados.
+
+Por fim, foram executados testes sobre imagens RGB reais obtidas por drone no Forte da Glória, comparando os resultados dos diferentes pré-processadores e algoritmos.
+
+% ── 1.4 ──────────────────────────────────────────────────────────────────
+\section{Estrutura}
+
+Este documento está organizado da seguinte forma:
+
+No Capítulo~2, são apresentados os conceitos preliminares que servirão de base para o desenvolvimento do projeto, incluindo fundamentos de grafos, algoritmos de caminhos mínimos e segmentação semântica.
+
+O Capítulo~3 traz uma revisão da literatura, com foco na análise do estado da arte em planejamento de trajetórias para robôs terrestres e em técnicas de segmentação semântica aplicadas a imagens aéreas.
+
+No Capítulo~4, descreve-se a arquitetura do sistema proposto, detalhando cada módulo da \textit{pipeline}, os modelos de segmentação utilizados e a construção dos grafos.
+
+O Capítulo~5 é dedicado à apresentação e discussão dos resultados experimentais, com a comparação do desempenho dos pré-processadores e algoritmos.
+
+No Capítulo~6, são apresentadas as conclusões do trabalho, bem como sugestões de possíveis extensões futuras.
+
+Por fim, o Capítulo~7 apresenta o cronograma detalhado das atividades realizadas ao longo do projeto.
+
+% ======================================================================
+\chapter{CONCEITOS PRELIMINARES}
+% ======================================================================
+
+Neste capítulo, apresentamos os conceitos fundamentais necessários para a compreensão do projeto. Além dos tópicos já abordados no projeto anterior \cite{camelo2025} --- veículos terrestres autônomos, planejamento de caminhos, grafos e algoritmos clássicos --- introduzimos conceitos de segmentação semântica e processamento de imagens que fundamentam as contribuições deste trabalho.
+
+% ── 2.1 ──────────────────────────────────────────────────────────────────
+\section{Veículos Terrestres Autônomos}
+
+Segundo \cite{finn2010}, um veículo terrestre autônomo (UGV) é um sistema robótico complexo e multidisciplinar, com participação ostensiva das engenharias mecânica, da computação e eletrônica. Este sistema tem como objetivo navegar pelo terreno de forma autônoma, sem a necessidade de intervenção por um operador externo, e executar determinada tarefa. Nos últimos anos, evidencia-se grande crescimento nas aplicações de UGVs, desde aplicações civis até aplicações militares.
+
+% ── 2.2 ──────────────────────────────────────────────────────────────────
+\section{Planejamento de Caminhos}
+
+O planejamento de caminhos é considerado um desafio crítico em Inteligência Artificial e essencial para o movimento autônomo de todos os sistemas inteligentes, como veículos terrestres \cite{madridano2021}. O planejamento pode ser categorizado como global (estático), quando toda a informação sobre o ambiente é conhecida, ou local (dinâmico), quando o ambiente é parcialmente desconhecido \cite{chen2020}. Neste trabalho, abordamos o planejamento de caminhos globais.
+
+% ── 2.3 ──────────────────────────────────────────────────────────────────
+\section{Grafos}
+
+Um grafo $G = (V, E)$ consiste em um conjunto de vértices $V = \{v_1, v_2, \ldots\}$ e um conjunto de arestas $E = \{e_1, e_2, \ldots\}$, tal que cada aresta é identificada com um par de vértices $(v_i, v_j)$ \cite{chen1997}. Podemos classificar os grafos como ponderados, caso suas arestas possuam pesos associados, ou não ponderados, caso contrário.
+
+Neste projeto, adotamos uma representação de grafo mais rica do que a utilizada no projeto anterior, incluindo:
+\begin{itemize}
+    \item \textbf{Matriz de adjacência esparsa}: representada em formato CSR (\textit{Compressed Sparse Row}) para eficiência em grafos de grande porte;
+    \item \textbf{\textit{Node embeddings}}: vetor $(x, y, w)$ para cada nó, contendo coordenadas espaciais e peso de transitabilidade;
+    \item \textbf{\textit{Edge index}}: tensor de dimensão $(2, |E|)$ com os pares (origem, destino) de cada aresta, seguindo a convenção do PyTorch Geometric;
+    \item \textbf{\textit{Edge embeddings}}: vetor $(c_w, d_u)$ para cada aresta, com custo ponderado e distância euclidiana.
+\end{itemize}
+
+% ── 2.4 ──────────────────────────────────────────────────────────────────
+\section{Algoritmos de Caminhos Mínimos em Grafos}
+
+O problema de caminhos mínimos consiste em encontrar a menor rota entre um ponto inicial e um ponto final \cite{deo2016}. Neste projeto, implementamos quatro algoritmos clássicos:
+
+\subsection{Breadth-First Search (BFS)}
+
+A busca em largura é a fundação de vários algoritmos em grafos e é comumente utilizada para encontrar caminhos mínimos em grafos não ponderados \cite{beamer2013}. Iniciando no nó fonte, a fronteira de busca expande visitando todos os nós em uma mesma profundidade antes de avançar.
+
+\subsection{Depth-First Search (DFS)}
+
+A busca em profundidade explora o grafo percorrendo cada ramo o mais profundamente possível antes de retroceder. Embora não garanta encontrar o caminho mínimo, é útil como base de comparação e em aplicações onde a existência de qualquer caminho é mais relevante que sua otimalidade.
+
+\subsection{Algoritmo de Dijkstra}
+
+O algoritmo de Dijkstra \cite{dijkstra1959} encontra o caminho mínimo em grafos com pesos não negativos, construindo os caminhos mínimos a partir da fonte na ordem crescente de distância. A cada passo, seleciona-se o vértice com menor distância acumulada para expansão.
+
+\subsection{Algoritmo A*}
+
+O algoritmo A* \cite{hart1968} utiliza uma função de avaliação $f(n) = g(n) + h(n)$, onde $g(n)$ é o custo do caminho da fonte até $n$ e $h(n)$ é uma estimativa heurística do custo restante até o destino. Para uma heurística admissível, o A* garante otimalidade explorando o menor número necessário de nós. Neste projeto, utiliza-se a distância euclidiana como heurística.
+
+% ── 2.5 ──────────────────────────────────────────────────────────────────
+\section{Segmentação Semântica}
+
+A segmentação semântica consiste em atribuir uma classe (rótulo) a cada pixel de uma imagem. Diferentemente da classificação de imagens, que atribui um rótulo único à imagem inteira, a segmentação semântica produz um mapa denso de classes com a mesma resolução da imagem de entrada.
+
+No contexto deste projeto, a segmentação semântica é utilizada para identificar automaticamente as regiões transitáveis do terreno a partir de imagens aéreas reais, substituindo a necessidade de imagens pré-segmentadas utilizada no projeto anterior.
+
+\subsection{DeepLabV3+}
+
+O DeepLabV3+ é uma arquitetura de segmentação semântica proposta por \cite{chen2018}, que combina convoluções atrozes (\textit{atrous convolutions}) com um módulo codificador-decodificador. O modelo utilizado neste projeto é treinado no dataset Pascal VOC, com 21 classes de objetos.
+
+\subsection{Segformer}
+
+O Segformer \cite{xie2021} é uma arquitetura baseada em \textit{Vision Transformers}, projetada para segmentação semântica eficiente. O modelo utilizado neste projeto é o \texttt{nvidia/segformer-b5-finetuned-ade-640-640}, treinado no dataset ADE20K com 150 classes, incluindo tipos de terreno específicos como estrada, calçada, grama, terra, campo, areia e caminho --- classes essenciais para a identificação de áreas transitáveis em imagens aéreas.
+
+% ── 2.6 ──────────────────────────────────────────────────────────────────
+\section{Pré-processamento de Imagens}
+
+\subsection{Normalização de Sombras por CLAHE}
+
+O CLAHE (\textit{Contrast Limited Adaptive Histogram Equalization}) é uma técnica de equalização adaptativa de histograma que melhora o contraste local da imagem, sendo particularmente eficaz na mitigação dos efeitos de sombras projetadas por edifícios e árvores em imagens aéreas. Neste projeto, o CLAHE é aplicado ao canal L do espaço de cores LAB antes da inferência dos modelos de segmentação.
+
+\subsection{Limpeza Morfológica de Máscaras}
+
+Após a segmentação, a máscara binária de transitabilidade é submetida a operações morfológicas de fechamento (\textit{close}), para preencher pequenas lacunas entre regiões transitáveis, e abertura (\textit{open}), para remover espúrios. Adicionalmente, componentes conexos com área inferior a um limiar mínimo são removidos, eliminando ``ilhas'' de transitabilidade irrelevantes para o planejamento de caminhos.
+
+% ======================================================================
+\chapter{REVISÃO DE LITERATURA}
+% ======================================================================
+
+No início da elaboração deste projeto, foi realizada a pesquisa bibliográfica no que concerne aos conceitos abordados. Além da revisão já conduzida no projeto anterior \cite{camelo2025}, nesta edição expandimos a análise para incluir trabalhos sobre segmentação semântica aplicada a imagens aéreas e arquiteturas de \textit{software} para sistemas de navegação autônoma.
+
+% ── 3.1 ──────────────────────────────────────────────────────────────────
+\section{Revisão Bibliométrica}
+
+A revisão bibliométrica foi atualizada para abranger artigos científicos publicados entre janeiro de 2021 e março de 2026. A pesquisa foi orientada para publicações que envolvessem planejamento de trajetórias, grafos, segmentação semântica e veículos terrestres não tripulados.
+
+% TODO: Atualizar com dados reais da pesquisa bibliométrica de 2026
+% Incluir histograma atualizado, distribuição por país, palavras-chave
+
+% ── 3.2 ──────────────────────────────────────────────────────────────────
+\section{Revisão Bibliográfica}
+
+Na literatura, a integração entre veículos aéreos não tripulados (UAV) e veículos terrestres não tripulados (UGV) é uma ideia explorada recorrentemente \cite{wu2020}. UAVs são normalmente utilizados para fazer a fotogrametria do terreno, e os mapas gerados alimentam um sistema de planejamento de caminhos, como explicita Li et al. em \cite{li2016}.
+
+No contexto de segmentação semântica para imagens aéreas, diversos trabalhos recentes demonstram a eficácia de redes neurais profundas. O Segformer \cite{xie2021} destacou-se por sua arquitetura leve baseada em \textit{Transformers}, alcançando resultados competitivos em benchmarks como o ADE20K. O DeepLabV3+ \cite{chen2018} permanece como referência em segmentação com convoluções atrozes.
+
+A integração de segmentação semântica com planejamento de caminhos para UGVs é abordada em \cite{junior2024}, onde imagens aéreas são processadas por redes neurais para gerar mapas de transitabilidade que alimentam o algoritmo RRT. O presente projeto estende essa abordagem ao incorporar os modelos de segmentação diretamente na \textit{pipeline} de planejamento, permitindo o uso de imagens RGB reais sem pré-processamento externo.
+
+Em relação às arquiteturas de \textit{software} para sistemas de navegação, a modularidade e extensibilidade são características reconhecidas como essenciais para a evolução e manutenção de sistemas complexos \cite{madridano2021}. O uso de padrões como \textit{Factory} e \textit{Abstract Base Classes} facilita a incorporação de novos algoritmos e representações.
+
+% TODO: Expandir com referências adicionais sobre segmentação semântica aérea
+
+% ======================================================================
+\chapter{METODOLOGIA}
+% ======================================================================
+
+No presente capítulo, apresentamos a arquitetura do sistema proposto, detalhando cada módulo da \textit{pipeline}, os modelos de segmentação semântica utilizados, a construção dos grafos e a interface gráfica desenvolvida.
+
+% ── 4.1 ──────────────────────────────────────────────────────────────────
+\section{Arquitetura do Sistema}
+
+O sistema foi projetado seguindo princípios de orientação a objetos, com quatro módulos independentes e encadeados, cada um definido por interfaces abstratas e instanciado por fábricas (\textit{Factory Pattern}):
+
+\begin{enumerate}
+    \item \textbf{\texttt{data\_ingestion}}: responsável pela ingestão e estruturação dos dados brutos. Define interfaces genéricas (\texttt{IngestedData}) com especializações para imagens (\texttt{ImageIngestedData}) e nuvens de pontos (\texttt{PointCloudIngestedData});
+    \item \textbf{\texttt{graph\_parsing}}: converte os dados segmentados em uma estrutura de grafo genérica (\texttt{Graph}), com matriz de adjacência esparsa, \textit{node embeddings}, \textit{edge index} e \textit{edge embeddings};
+    \item \textbf{\texttt{algorithm}}: executa algoritmos de caminho mínimo sobre o grafo, retornando um \texttt{PathResult} padronizado com a sequência de nós, custo total e metadados;
+    \item \textbf{\texttt{post\_processing}}: converte o resultado do algoritmo em dados utilizáveis pelo robô (\texttt{RobotPath}) ou em visualizações anotadas sobre a imagem original.
+\end{enumerate}
+
+Cada módulo possui um arquivo \texttt{interfaces.py} com classes abstratas, \texttt{entities.py} com dataclasses, \texttt{index.py} com a fábrica de registro, e um \texttt{\_\_init\_\_.py} com as exportações públicas.
+
+% ── 4.2 ──────────────────────────────────────────────────────────────────
+\section{Construção dos Grafos}
+
+A construção dos grafos segue a metodologia proposta em \cite{camelo2025}, com aprimoramentos significativos:
+
+\begin{itemize}
+    \item \textbf{Representação esparsa}: a matriz de adjacência é armazenada em formato CSR (\texttt{scipy.sparse.csr\_matrix}), permitindo grafos com milhões de nós sem estourar a memória;
+    \item \textbf{Ponderação por transformada de distância}: o peso de cada nó é calculado pela transformada de distância euclidiana (\texttt{scipy.ndimage.distance\_transform\_edt}), substituindo a verificação iterativa pixel-a-pixel do projeto anterior, com ganho substancial de desempenho;
+    \item \textbf{Construção vetorizada}: as arestas são construídas de forma vetorizada com operações NumPy, evitando laços Python sobre cada pixel.
+\end{itemize}
+
+A função \texttt{build\_grid\_graph()} em \texttt{graph\_parsing/\_grid\_utils.py} é compartilhada entre o \texttt{GridImageGraphParser} (para imagens com cores fixas) e o \texttt{SegmentedImageGraphParser} (para imagens segmentadas semanticamente).
+
+% ── 4.4 ──────────────────────────────────────────────────────────────────
+\section{Algoritmos de Planejamento}
+
+Os algoritmos A*, Dijkstra, BFS e DFS foram reimplementados sobre a nova representação de grafo. A lógica comum entre A* e Dijkstra foi extraída para uma função compartilhada \texttt{priority\_queue\_search()}, parametrizada pelo uso ou não de heurística. Os utilitários de reconstrução de caminho e cálculo de custo foram centralizados no módulo \texttt{algorithm/\_utils.py}.
+
+% ── 4.5 ──────────────────────────────────────────────────────────────────
+\section{Pós-processamento}
+
+Dois pós-processadores foram implementados:
+\begin{itemize}
+    \item \texttt{SimpleWaypointProcessor}: converte a sequência de nós em \textit{waypoints} com coordenadas, proa e tipo de movimento, adequados para envio ao sistema de navegação do UGV;
+    \item \texttt{ImageDrawingPostProcessor}: desenha os caminhos encontrados sobre a imagem original, com cores distintas por algoritmo e marcadores de início e fim, salvando a imagem anotada em disco.
+\end{itemize}
+
+% ── 4.6 ──────────────────────────────────────────────────────────────────
+\section{Interface Gráfica Interativa}
+
+Foi desenvolvida uma interface gráfica interativa utilizando a biblioteca Gradio, permitindo:
+\begin{itemize}
+    \item Seleção de imagens a partir de um diretório, com visualização imediata;
+    \item Definição dos pontos de origem e destino por clique na imagem exibida;
+    \item Configuração de hiperparâmetros de pré-processamento (limiar de confiança, tamanho máximo de entrada, área mínima de ilha), construção de grafos (conectividade 4/8, tamanho do robô) e algoritmos (seleção múltipla, ponderação);
+    \item Execução integral da \textit{pipeline} com exibição da imagem anotada, sobreposição da máscara de transitabilidade e registro detalhado da execução.
+\end{itemize}
+
+% ── 4.7 ──────────────────────────────────────────────────────────────────
+\section{Coleta dos Dados}
+
+Para os experimentos deste projeto, foram utilizadas imagens RGB obtidas por drone DJI no Forte da Glória, Rio de Janeiro. O conjunto contém imagens de alta resolução (4000$\times$3000 pixels) capturadas em diversas perspectivas, abrangendo áreas com edifícios históricos, praças com paralelepípedos, vegetação densa e caminhos pavimentados.
+
+% ======================================================================
+\chapter{RESULTADOS E DISCUSSÃO}
+% ======================================================================
+
+Neste capítulo, apresentamos e discutimos os resultados obtidos nos experimentos realizados com o sistema proposto.
+
+% TODO: Preencher com resultados experimentais detalhados, incluindo:
+% - Comparação de pré-processadores (HSV vs DeepLabV3+ vs Segformer)
+% - Porcentagem de área transitável por método e por imagem
+% - Comparação de algoritmos (A* vs Dijkstra vs BFS vs DFS)
+% - Tabelas com métricas: distância, custo, nós explorados, tempo
+% - Figuras com caminhos anotados e máscaras de transitabilidade
+% - Análise das limitações (perspectiva aérea vs nível do solo para Segformer)
+
+\section{Comparação dos Pré-processadores}
+
+% TODO: Tabela comparativa entre os 3 pré-processadores para cada imagem
+
+\section{Desempenho dos Algoritmos}
+
+% TODO: Tabelas e figuras com resultados por algoritmo
+
+\section{Análise da Interface Gráfica}
+
+% TODO: Screenshots e análise de usabilidade
+
+% ======================================================================
+\chapter{CONCLUSÃO}
+% ======================================================================
+
+% TODO: Redigir conclusão completa após obtenção dos resultados
+
+O presente trabalho estendeu o projeto de planejamento de trajetória para robôs terrestres desenvolvido em 2025 \cite{camelo2025}, introduzindo três contribuições principais: uma arquitetura modular orientada a objetos, segmentação semântica automatizada por aprendizado profundo e uma interface gráfica interativa.
+
+A arquitetura proposta, organizada em cinco módulos encadeados com interfaces abstratas e fábricas, demonstrou-se flexível e extensível, permitindo a fácil incorporação de novos algoritmos, representações de grafos e métodos de pré-processamento.
+
+A incorporação do modelo Segformer (ADE20K, 150 classes) permitiu a segmentação direta de imagens RGB reais de drones, eliminando a dependência de imagens pré-segmentadas por sistemas externos. A normalização de sombras por CLAHE e a limpeza morfológica de máscaras contribuíram para a robustez do processo de segmentação.
+
+A interface gráfica interativa, desenvolvida com a biblioteca Gradio, facilitou significativamente o processo de experimentação, permitindo a seleção visual de pontos, ajuste de hiperparâmetros e visualização imediata dos resultados.
+
+% ── 6.1 ──────────────────────────────────────────────────────────────────
+\section{Perspectivas Futuras}
+
+Apesar das contribuições do presente projeto, alguns pontos relevantes permanecem como oportunidades para trabalhos futuros:
+
+\begin{itemize}
+    \item \textbf{Ambientes dinâmicos}: implementação de algoritmos como D* e D* Lite para lidar com obstáculos dinâmicos e replanejamento em tempo real;
+    \item \textbf{Nuvens de pontos 3D}: extensão da \textit{pipeline} para processar nuvens de pontos obtidas por LIDAR, aproveitando a interface \texttt{PointCloudIngestedData} já definida na arquitetura;
+    \item \textbf{Modelos especializados para imagens aéreas}: treinamento ou \textit{fine-tuning} de modelos de segmentação especificamente para perspectivas aéreas/satelitais, onde modelos treinados em imagens ao nível do solo (como ADE20K) apresentam limitações;
+    \item \textbf{Otimização de desempenho}: paralelização da construção de grafos e uso de aceleração GPU para os algoritmos de caminho mínimo em grafos de grande porte;
+    \item \textbf{Integração com sistemas reais}: interface com o sistema de navegação do UGV para envio dos \textit{waypoints} calculados e validação em campo.
+    \item \textbf{Validação em simulação}: integração da \textit{pipeline} 
+    com ambientes de simulação robótica, como o Gazebo, permitindo a 
+    validação dos caminhos calculados em cenários sintéticos controlados 
+    antes da implantação em campo. Modelos de terreno gerados a partir das 
+    imagens do Forte da Glória poderiam ser importados como mundos Gazebo, 
+    e os \textit{waypoints} produzidos pelo módulo de pós-processamento 
+    enviados ao controlador simulado do UGV.
+\end{itemize}
+
+% ======================================================================
+\chapter{CRONOGRAMA}
+% ======================================================================
+
+A Figura~\ref{fig:cronograma}, a seguir, apresenta o cronograma detalhado das atividades realizadas e planejadas ao longo do projeto.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{timeline.png}
+    \caption{Cronograma de atividades}
+    \label{fig:cronograma}
+\end{figure}
+
+% ══════════════════════════════════════════════════════════════════════════
+%  REFERÊNCIAS
+% ══════════════════════════════════════════════════════════════════════════
+\bibliography{referencias}
+
+\end{document}

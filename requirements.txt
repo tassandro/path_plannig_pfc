@@ -4,3 +4,4 @@ opencv-python>=4.8
 torch>=2.0
 torchvision>=0.15
 transformers>=4.30
+gradio
