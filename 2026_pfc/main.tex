@@ -222,7 +222,7 @@ Os agradecimentos principais são direcionados aos nossos orientadores por todo 
 % ── Resumo ───────────────────────────────────────────────────────────────
 \setlength{\absparsep}{18pt}
 \begin{resumo}
-Este projeto dá continuidade ao trabalho de planejamento de trajetória para veículos terrestres não tripulados desenvolvido em 2025, estendendo-o em três frentes principais: (i)~a adoção de uma arquitetura de \textit{software} orientada a objetos e modular, organizada em quatro estágios encadeados --- ingestão de dados, construção de grafos, algoritmos de caminho mínimo e pós-processamento; (ii)~a incorporação de técnicas de segmentação semântica baseadas em aprendizado profundo, nomeadamente DeepLabV3+ e Segformer (ADE20K, 150~classes), para identificação automática de regiões transitáveis em imagens aéreas reais de drones, incluindo normalização de sombras por CLAHE e limpeza morfológica de máscaras; e (iii)~a implementação de uma interface gráfica interativa que permite a seleção de imagens, definição de pontos de origem e destino por clique, ajuste de hiperparâmetros e execução da \textit{pipeline} completa com visualização dos resultados. Os algoritmos A*, Dijkstra, BFS e DFS foram reimplementados sobre uma representação genérica de grafo com matrizes esparsas, \textit{edge index} e \textit{embeddings} de nós e arestas. Os experimentos conduzidos sobre imagens RGB do Forte da Glória demonstram que a abordagem proposta é capaz de segmentar terrenos complexos e gerar caminhos ótimos ponderados, contribuindo para a evolução do planejamento de trajetórias no contexto do projeto SVTRP do CTEx.
+Este projeto dá continuidade ao trabalho de planejamento de trajetória para veículos terrestres não tripulados desenvolvido em 2025, estendendo-o em três frentes principais: (i)~a adoção de uma arquitetura de \textit{software} orientada a objetos e modular, organizada em quatro estágios encadeados --- ingestão de dados, construção de grafos, algoritmos de caminho mínimo e pós-processamento; (ii)~a incorporação de técnicas de segmentação semântica baseadas em aprendizado profundo, nomeadamente DeepLabV3+ e Segformer (ADE20K, 150~classes), para identificação automática de regiões transitáveis em imagens aéreas reais de drones, incluindo normalização de sombras por CLAHE e limpeza morfológica de máscaras; e (iii)~a implementação de uma interface gráfica interativa que permite a seleção de imagens, definição de pontos de origem e destino por clique, ajuste de hiperparâmetros e execução da \textit{pipeline} completa com visualização dos resultados. Os algoritmos A*, Dijkstra, BFS e DFS foram reimplementados sobre uma representação genérica de grafo com matrizes esparsas, \textit{edge index} e \textit{embeddings} de nós e arestas. Os experimentos conduzidos sobre imagens RGB do Quinta da Boa Vista demonstram que a abordagem proposta é capaz de segmentar terrenos complexos e gerar caminhos ótimos ponderados, contribuindo para a evolução do planejamento de trajetórias no contexto do projeto SVTRP do CTEx.
 
 \textbf{Palavras-chave}: Veículos terrestres não tripulados; Segmentação semântica; Algoritmos baseados em grafos; Planejamento de trajetórias; Aprendizado de máquina.
 \end{resumo}
@@ -230,7 +230,7 @@ Este projeto dá continuidade ao trabalho de planejamento de trajetória para ve
 % ── Abstract ─────────────────────────────────────────────────────────────
 \begin{resumo}[Abstract]
 \begin{otherlanguage*}{english}
-This project continues the trajectory planning work for unmanned ground vehicles developed in 2025, extending it in three main directions: (i)~an object-oriented, modular software architecture organized into four chained stages---data ingestion, graph construction, shortest-path algorithms, and post-processing; (ii)~the incorporation of deep-learning-based semantic segmentation techniques, namely DeepLabV3+ and Segformer (ADE20K, 150~classes), for automatic identification of traversable regions in real drone aerial images, including CLAHE shadow normalization and morphological mask cleanup; and (iii)~an interactive graphical interface allowing image selection, click-based start/end point definition, hyperparameter tuning, and full pipeline execution with result visualization. The A*, Dijkstra, BFS, and DFS algorithms were reimplemented over a generic graph representation using sparse matrices, edge indices, and node/edge embeddings. Experiments conducted on RGB images from Forte da Glória demonstrate that the proposed approach can segment complex terrains and generate optimal weighted paths, contributing to the evolution of trajectory planning within the CTEx SVTRP project.
+This project continues the trajectory planning work for unmanned ground vehicles developed in 2025, extending it in three main directions: (i)~an object-oriented, modular software architecture organized into four chained stages---data ingestion, graph construction, shortest-path algorithms, and post-processing; (ii)~the incorporation of deep-learning-based semantic segmentation techniques, namely DeepLabV3+ and Segformer (ADE20K, 150~classes), for automatic identification of traversable regions in real drone aerial images, including CLAHE shadow normalization and morphological mask cleanup; and (iii)~an interactive graphical interface allowing image selection, click-based start/end point definition, hyperparameter tuning, and full pipeline execution with result visualization. The A*, Dijkstra, BFS, and DFS algorithms were reimplemented over a generic graph representation using sparse matrices, edge indices, and node/edge embeddings. Experiments conducted on RGB images from Quinta da Boa Vista demonstrate that the proposed approach can segment complex terrains and generate optimal weighted paths, contributing to the evolution of trajectory planning within the CTEx SVTRP project.
 
 \textbf{Keywords}: Unmanned ground vehicles; Semantic segmentation; Graph-based algorithms; Trajectory planning; Machine learning.
 \end{otherlanguage*}
@@ -310,7 +310,7 @@ O presente projeto busca dar continuidade e aprofundar o estudo de planejamento 
 
 O projeto anterior demonstrou a viabilidade da abordagem baseada em grafos, porém dependia de imagens previamente segmentadas por redes neurais externas. A necessidade de integrar o processo de segmentação diretamente no \textit{pipeline} de planejamento, utilizando modelos mais robustos e capazes de lidar com a diversidade de terrenos encontrados em imagens reais de drones, constitui a principal motivação deste trabalho.
 
-Adicionalmente, a construção de uma arquitetura modular orientada a objetos possibilita a fácil incorporação de novos algoritmos, representações de grafos e métodos de pré-processamento, facilitando a evolução contínua do sistema.
+Adicionalmente, em relação ao projeto anterior \cite{camelo2025}, a adoção de uma arquitetura modular orientada a objetos constitui uma melhoria estrutural significativa: ao definir interfaces abstratas para cada estágio do \textit{pipeline}, o sistema possibilita a fácil incorporação de novos algoritmos, representações de grafos e métodos de pré-processamento --- e até mesmo de outros tipos de entrada, como nuvens de pontos obtidas por LIDAR --- sem necessidade de reescrita do restante do código.
 
 % ── 1.2 ──────────────────────────────────────────────────────────────────
 \section{Objetivos}
@@ -323,7 +323,7 @@ Para atingir o objetivo principal, foram definidos os seguintes objetivos espec�
     \item Implementar técnicas de segmentação semântica baseadas em aprendizado profundo (Segformer ADE20K e DeepLabV3+) para identificação automática de regiões transitáveis em imagens aéreas reais;
     \item Reimplementar os algoritmos A*, Dijkstra, BFS e DFS sobre uma representação genérica de grafo com suporte a matrizes esparsas;
     \item Desenvolver uma interface gráfica interativa para seleção de imagens, definição de pontos por clique e ajuste de hiperparâmetros; e
-    \item Executar testes comparativos sobre imagens RGB reais obtidas por drone no Forte da Glória.
+    \item Executar testes comparativos sobre imagens RGB reais obtidas por drone no Quinta da Boa Vista.
 \end{itemize}
 
 % ── 1.3 ──────────────────────────────────────────────────────────────────
@@ -335,11 +335,11 @@ Inicialmente, foi conduzida uma revisão do projeto anterior \cite{camelo2025} e
 
 Em seguida, projetou-se a arquitetura modular do sistema, definindo interfaces abstratas (\textit{Abstract Base Classes}) e padrões de fábrica (\textit{Factory Pattern}) para cada estágio do \textit{pipeline}: \texttt{data\_ingestion}, \texttt{graph\_parsing}, \texttt{algorithm} e \texttt{post\_processing}.
 
-Na etapa de implementação, os algoritmos A*, Dijkstra, BFS e DFS foram reimplementados sobre a nova representação genérica de grafo.
+Na etapa de implementação, os algoritmos A*, Dijkstra, BFS e DFS foram reimplementados sobre a nova representação genérica de grafo. A adoção de matrizes de adjacência esparsas (formato CSR --- \textit{Compressed Sparse Row}) é motivada diretamente pela escala dos grafos gerados a partir de imagens aéreas de alta resolução: uma imagem de 4000$\times$3000 pixels produz até $1{,}2 \times 10^7$ nós, de modo que uma matriz de adjacência densa exigiria $O(n^2) \approx 1{,}44 \times 10^{14}$ entradas --- inviável em termos de memória. Em contraste, em uma grade com conectividade 8 cada nó possui no máximo oito vizinhos; o número de arestas cresce, portanto, linearmente com o número de nós ($O(8n)$), e o formato CSR armazena exatamente essas entradas não nulas, reduzindo o consumo de memória de dezenas de terabytes para algumas dezenas de megabytes \cite{barrett1994}.
 
 Desenvolveu-se uma interface gráfica interativa baseada na biblioteca Gradio, permitindo a execução integral do \textit{pipeline} com visualização dos resultados.
 
-Por fim, foram executados testes sobre imagens RGB reais obtidas por drone no Forte da Glória, comparando os resultados dos diferentes pré-processadores e algoritmos.
+Por fim, foram executados testes sobre imagens RGB reais obtidas por drone no Quinta da Boa Vista, comparando os resultados dos diferentes pré-processadores e algoritmos.
 
 % ── 1.4 ──────────────────────────────────────────────────────────────────
 \section{Estrutura}
@@ -426,13 +426,7 @@ O Segformer \cite{xie2021} é uma arquitetura baseada em \textit{Vision Transfor
 % ── 2.6 ──────────────────────────────────────────────────────────────────
 \section{Pré-processamento de Imagens}
 
-\subsection{Normalização de Sombras por CLAHE}
-
-O CLAHE (\textit{Contrast Limited Adaptive Histogram Equalization}) é uma técnica de equalização adaptativa de histograma que melhora o contraste local da imagem, sendo particularmente eficaz na mitigação dos efeitos de sombras projetadas por edifícios e árvores em imagens aéreas. Neste projeto, o CLAHE é aplicado ao canal L do espaço de cores LAB antes da inferência dos modelos de segmentação.
-
-\subsection{Limpeza Morfológica de Máscaras}
-
-Após a segmentação, a máscara binária de transitabilidade é submetida a operações morfológicas de fechamento (\textit{close}), para preencher pequenas lacunas entre regiões transitáveis, e abertura (\textit{open}), para remover espúrios. Adicionalmente, componentes conexos com área inferior a um limiar mínimo são removidos, eliminando ``ilhas'' de transitabilidade irrelevantes para o planejamento de caminhos.
+As técnicas de pré-processamento empregadas neste projeto --- normalização de sombras por CLAHE (\textit{Contrast Limited Adaptive Histogram Equalization}) e limpeza morfológica de máscaras --- foram herdadas do projeto anterior \cite{camelo2025}, que já as utilizava para melhorar a qualidade das máscaras de segmentação. Neste trabalho, essas técnicas são integradas diretamente na \textit{pipeline}: o CLAHE é aplicado ao canal L do espaço de cores LAB antes da inferência dos modelos de aprendizado profundo, e a limpeza morfológica --- operações de fechamento e abertura seguidas da remoção de componentes conexos de área inferior a um limiar mínimo --- é aplicada sobre a máscara binária resultante. Para uma descrição detalhada dessas técnicas, consultar \cite{camelo2025}.
 
 % ======================================================================
 \chapter{REVISÃO DE LITERATURA}
@@ -473,13 +467,19 @@ No presente capítulo, apresentamos a arquitetura do sistema proposto, detalhand
 O sistema foi projetado seguindo princípios de orientação a objetos, com quatro módulos independentes e encadeados, cada um definido por interfaces abstratas e instanciado por fábricas (\textit{Factory Pattern}):
 
 \begin{enumerate}
-    \item \textbf{\texttt{data\_ingestion}}: responsável pela ingestão e estruturação dos dados brutos. Define interfaces genéricas (\texttt{IngestedData}) com especializações para imagens (\texttt{ImageIngestedData}) e nuvens de pontos (\texttt{PointCloudIngestedData});
+    \item \textbf{\texttt{data\_ingestion}}: responsável pela ingestão e estruturação dos dados brutos. Define uma interface genérica (\texttt{IngestedData}) com especialização para imagens (\texttt{ImageIngestedData}), sendo a arquitetura extensível para outros tipos de dado, como nuvens de pontos;
     \item \textbf{\texttt{graph\_parsing}}: converte os dados segmentados em uma estrutura de grafo genérica (\texttt{Graph}), com matriz de adjacência esparsa, \textit{node embeddings}, \textit{edge index} e \textit{edge embeddings};
     \item \textbf{\texttt{algorithm}}: executa algoritmos de caminho mínimo sobre o grafo, retornando um \texttt{PathResult} padronizado com a sequência de nós, custo total e metadados;
     \item \textbf{\texttt{post\_processing}}: converte o resultado do algoritmo em dados utilizáveis pelo robô (\texttt{RobotPath}) ou em visualizações anotadas sobre a imagem original.
 \end{enumerate}
 
 Cada módulo possui um arquivo \texttt{interfaces.py} com classes abstratas, \texttt{entities.py} com dataclasses, \texttt{index.py} com a fábrica de registro, e um \texttt{\_\_init\_\_.py} com as exportações públicas.
+
+\subsection{Plataforma-alvo e Formato de Saída}
+
+A plataforma de execução considerada neste projeto é um UGV simulado no ambiente Gazebo. O Gazebo é um simulador robótico de código aberto amplamente utilizado na comunidade de robótica, compatível com o \textit{framework} ROS (\textit{Robot Operating System}), que permite modelar a dinâmica do veículo, sensores e o ambiente de operação com elevado grau de fidelidade antes da implantação em campo \cite{gazebo2004}.
+
+Nesse contexto, o módulo \texttt{post\_processing} é o responsável por produzir uma saída compatível com as entradas esperadas pelo controlador do UGV no Gazebo. O formato adotado é uma sequência de \textit{waypoints}, em que cada ponto contém: coordenadas $(x, y)$ no sistema de referência da imagem, ângulo de proa $\theta$ (orientação para o próximo ponto) e o tipo de movimento associado (translação ou parada). Essa estrutura é encapsulada na dataclass \texttt{RobotPath} e pode ser serializada para os formatos de mensagem ROS (\texttt{nav\_msgs/Path}), permitindo a integração direta com os nós de controle do simulador.
 
 % ── 4.2 ──────────────────────────────────────────────────────────────────
 \section{Construção dos Grafos}
@@ -522,7 +522,7 @@ Foi desenvolvida uma interface gráfica interativa utilizando a biblioteca Gradi
 % ── 4.7 ──────────────────────────────────────────────────────────────────
 \section{Coleta dos Dados}
 
-Para os experimentos deste projeto, foram utilizadas imagens RGB obtidas por drone DJI no Forte da Glória, Rio de Janeiro. O conjunto contém imagens de alta resolução (4000$\times$3000 pixels) capturadas em diversas perspectivas, abrangendo áreas com edifícios históricos, praças com paralelepípedos, vegetação densa e caminhos pavimentados.
+Para os experimentos deste projeto, foram utilizadas imagens RGB obtidas por drone DJI no Quinta da Boa Vista, Rio de Janeiro. O conjunto contém imagens de alta resolução (4000$\times$3000 pixels) capturadas em diversas perspectivas, abrangendo áreas com edifícios históricos, praças com paralelepípedos, vegetação densa e caminhos pavimentados.
 
 % ======================================================================
 \chapter{RESULTADOS E DISCUSSÃO}
@@ -571,7 +571,7 @@ Apesar das contribuições do presente projeto, alguns pontos relevantes permane
 
 \begin{itemize}
     \item \textbf{Ambientes dinâmicos}: implementação de algoritmos como D* e D* Lite para lidar com obstáculos dinâmicos e replanejamento em tempo real;
-    \item \textbf{Nuvens de pontos 3D}: extensão da \textit{pipeline} para processar nuvens de pontos obtidas por LIDAR, aproveitando a interface \texttt{PointCloudIngestedData} já definida na arquitetura;
+    \item \textbf{Nuvens de pontos 3D}: extensão da \textit{pipeline} para processar nuvens de pontos obtidas por LIDAR, viabilizada pela arquitetura modular com interfaces abstratas para o estágio de ingestão de dados;
     \item \textbf{Modelos especializados para imagens aéreas}: treinamento ou \textit{fine-tuning} de modelos de segmentação especificamente para perspectivas aéreas/satelitais, onde modelos treinados em imagens ao nível do solo (como ADE20K) apresentam limitações;
     \item \textbf{Otimização de desempenho}: paralelização da construção de grafos e uso de aceleração GPU para os algoritmos de caminho mínimo em grafos de grande porte;
     \item \textbf{Integração com sistemas reais}: interface com o sistema de navegação do UGV para envio dos \textit{waypoints} calculados e validação em campo.
@@ -579,7 +579,7 @@ Apesar das contribuições do presente projeto, alguns pontos relevantes permane
     com ambientes de simulação robótica, como o Gazebo, permitindo a 
     validação dos caminhos calculados em cenários sintéticos controlados 
     antes da implantação em campo. Modelos de terreno gerados a partir das 
-    imagens do Forte da Glória poderiam ser importados como mundos Gazebo, 
+    imagens do Quinta da Boa Vista poderiam ser importados como mundos Gazebo, 
     e os \textit{waypoints} produzidos pelo módulo de pós-processamento 
     enviados ao controlador simulado do UGV.
 \end{itemize}
