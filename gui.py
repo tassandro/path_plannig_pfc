@@ -33,9 +33,9 @@ from graph_parsing import GraphParserFactory
 from post_processing import ImageDrawingPostProcessor
 from preprocessing import PreProcessorFactory
 
-# The ROS 2 bridge is optional — it depends on the (not-yet-committed)
-# ``ros_bridge`` module and a working rclpy install. Import lazily so the GUI
-# still launches without it; the "Publish to ROS 2" option is inert if absent.
+# The ROS 2 bridge is optional — it depends on a sourced ROS 2 environment
+# (rclpy, cv_bridge). Import lazily so the GUI still launches without it;
+# the "Publish to ROS 2" option is inert (checkbox has no effect) if absent.
 try:
     from ros_bridge import RosBridgeConfig, RosBridgeFactory
 
@@ -330,8 +330,8 @@ def run_pipeline(
 
         if publish_ros:
             if not _ROS_AVAILABLE:
-                log("\nSkipping ROS publish — the 'ros_bridge' module is not "
-                    "installed (it was not included in the merge).")
+                log("\nSkipping ROS publish — the 'ros_bridge' module could not "
+                    "import rclpy/cv_bridge (no sourced ROS 2 environment).")
             elif last_robot_path is None:
                 log("\nSkipping ROS publish — no algorithm produced a valid path.")
             else:
