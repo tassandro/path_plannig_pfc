@@ -19,6 +19,7 @@ ALGORITHM_COLORS: dict[str, tuple[int, int, int]] = {
     "Dijkstra (unweighted)": (96, 247, 62),
     "BFS": (255, 42, 245),
     "DFS": (0, 255, 255),
+    "RRT": (255, 128, 0),
 }
 
 
