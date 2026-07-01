@@ -106,6 +106,30 @@ def main() -> None:
         "the Gazebo/world frame instead of raw pixel coordinates.",
     )
 
+    # Optional segmentation post-processing (off by default for drone_* models).
+    parser.add_argument(
+        "--confidence-threshold", type=float, default=None,
+        help="Enable confidence filtering with this min softmax prob (default: off)",
+    )
+    parser.add_argument(
+        "--max-input-size", type=int, default=None,
+        help="Enable resizing so the longest edge equals this before inference "
+             "(default: off = full resolution)",
+    )
+    parser.add_argument(
+        "--min-area", type=int, default=None,
+        help="Enable mask cleanup, removing components smaller than this "
+             "(default: off = raw mask)",
+    )
+
+    # RRT-specific parameters (used only when --algorithm includes rrt).
+    parser.add_argument("--rrt-step-size", type=float, default=20.0,
+                        help="RRT expansion step in pixels (default: 20)")
+    parser.add_argument("--rrt-max-iter", type=int, default=5000,
+                        help="RRT max sampling iterations (default: 5000)")
+    parser.add_argument("--rrt-seed", type=int, default=None,
+                        help="RRT RNG seed for reproducible runs (default: random)")
+
     args = parser.parse_args()
 
     sx, sy = (int(v) for v in args.start.split(","))
@@ -134,7 +158,14 @@ def main() -> None:
         graph = graph_parser.parse(data)
     else:
         print(f"Preprocessing with '{args.preprocessor}' …")
-        preprocessor = PreProcessorFactory.create(args.preprocessor)
+        pre_kwargs: dict = {}
+        if args.confidence_threshold is not None:
+            pre_kwargs["confidence_threshold"] = args.confidence_threshold
+        if args.max_input_size is not None:
+            pre_kwargs["max_input_size"] = args.max_input_size
+        if args.min_area is not None:
+            pre_kwargs["min_area"] = args.min_area
+        preprocessor = PreProcessorFactory.create(args.preprocessor, **pre_kwargs)
         segmented = preprocessor.process(data)
         walkable_pct = segmented.get_walkable_mask().mean() * 100
         print(f"  Walkable pixels: {walkable_pct:.1f}%")
@@ -180,7 +211,14 @@ def main() -> None:
     last_robot_path = None
 
     for algo_key in args.algorithm:
-        algo = AlgorithmFactory.create(algo_key, weighted=args.weighted)
+        algo_kwargs: dict = {"weighted": args.weighted}
+        if algo_key == "rrt":
+            algo_kwargs.update(
+                step_size=args.rrt_step_size,
+                max_iterations=args.rrt_max_iter,
+                seed=args.rrt_seed,
+            )
+        algo = AlgorithmFactory.create(algo_key, **algo_kwargs)
         print(f"\n{'=' * 50}")
         print(f"Running {algo.name()} …")
 
@@ -196,7 +234,8 @@ def main() -> None:
         meta = path_result.metadata
         print(f"  Path nodes:      {path_result.length}")
         print(f"  Total cost:      {path_result.total_cost:.2f}")
-        print(f"  Nodes explored:  {meta.get('nodes_explored', '?')}")
+        explored = meta.get("nodes_explored", meta.get("iterations", "?"))
+        print(f"  Explored/iter:   {explored}")
         print(f"  Time:            {meta.get('elapsed_seconds', 0):.4f}s")
         print(f"  Robot waypoints: {robot_path.num_waypoints}")
         print(f"  Real distance:   {robot_path.total_distance:.2f}")

@@ -5,6 +5,7 @@ from .bfs import BFSAlgorithm
 from .dfs import DFSAlgorithm
 from .dijkstra import DijkstraAlgorithm
 from .interfaces import PathAlgorithm
+from .rrt import RRTAlgorithm
 
 
 class AlgorithmFactory:
@@ -44,3 +45,4 @@ AlgorithmFactory.register("a_star", AStarAlgorithm)
 AlgorithmFactory.register("dijkstra", DijkstraAlgorithm)
 AlgorithmFactory.register("bfs", BFSAlgorithm)
 AlgorithmFactory.register("dfs", DFSAlgorithm)
+AlgorithmFactory.register("rrt", RRTAlgorithm)

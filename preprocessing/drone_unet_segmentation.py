@@ -112,16 +112,30 @@ class DroneUNetPreProcessor(PreProcessor):
         ``{1, 2, 3, 4}`` (paved-area, dirt, grass, gravel).
     confidence_threshold :
         Minimum softmax probability required to trust a walkable pixel.
+        ``None`` (default) disables confidence filtering — every argmax
+        prediction is kept.
     max_input_size :
         Longest-edge size images are resized to before inference; the mask
-        is upscaled back to the original resolution.
+        is upscaled back to the original resolution. ``None`` (default)
+        disables resizing — inference runs at the original resolution
+        (slower / more memory on large images).
     shadow_clip_limit :
         CLAHE clip-limit for shadow normalization. ``0`` disables it
         (default — the models were trained on un-normalized imagery).
     min_area :
-        Connected components smaller than this are removed from the mask.
+        When set, the raw mask is passed through ``cleanup_mask``
+        (morphological open/close + removal of connected components smaller
+        than this). ``None`` (default) skips cleanup entirely, returning the
+        raw per-pixel model output.
     device :
         ``"cpu"``, ``"cuda"`` or ``"mps"``. Auto-detected when ``None``.
+
+    Notes
+    -----
+    The three optional post-processing steps (confidence filtering, input
+    resizing, mask cleanup) are **all off by default**, so the out-of-the-box
+    result is the raw model segmentation. Enable them individually — via the
+    GUI toggles or the ``main.py`` CLI flags — to study their effect.
     """
 
     def __init__(
@@ -129,10 +143,10 @@ class DroneUNetPreProcessor(PreProcessor):
         model_name: str = "efficientnet-b4",
         model_path: str | None = None,
         walkable_classes: set[int] | None = None,
-        confidence_threshold: float = 0.5,
-        max_input_size: int = 1024,
+        confidence_threshold: float | None = None,
+        max_input_size: int | None = None,
         shadow_clip_limit: float = 0.0,
-        min_area: int = 1000,
+        min_area: int | None = None,
         device: str | None = None,
     ):
         self._model_name = model_name
@@ -201,16 +215,31 @@ class DroneUNetPreProcessor(PreProcessor):
 
         rgb = cv2.cvtColor(pixels_norm, cv2.COLOR_BGR2RGB)
 
-        # Resize large images to keep inference tractable
-        scale = min(self._max_input_size / max(h_orig, w_orig), 1.0)
+        # Optional resize to keep inference tractable (disabled when None)
+        if self._max_input_size is not None:
+            scale = min(self._max_input_size / max(h_orig, w_orig), 1.0)
+        else:
+            scale = 1.0
         if scale < 1.0:
             new_h, new_w = int(h_orig * scale), int(w_orig * scale)
             rgb_small = cv2.resize(rgb, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
         else:
             rgb_small = rgb
 
+        # The U-Net encoder downsamples by 32, so H and W must be multiples of
+        # 32. Reflect-pad up to the next multiple, then crop the output back.
+        h_s, w_s = rgb_small.shape[:2]
+        pad_h = (32 - h_s % 32) % 32
+        pad_w = (32 - w_s % 32) % 32
+        if pad_h or pad_w:
+            rgb_pad = cv2.copyMakeBorder(
+                rgb_small, 0, pad_h, 0, pad_w, cv2.BORDER_REFLECT
+            )
+        else:
+            rgb_pad = rgb_small
+
         # ImageNet-normalized CHW tensor (matches training preprocessing)
-        norm = (rgb_small.astype(np.float32) / 255.0 - _IMAGENET_MEAN) / _IMAGENET_STD
+        norm = (rgb_pad.astype(np.float32) / 255.0 - _IMAGENET_MEAN) / _IMAGENET_STD
         tensor = torch.from_numpy(norm.transpose(2, 0, 1)).unsqueeze(0).to(self._device)
 
         with torch.no_grad():
@@ -219,9 +248,14 @@ class DroneUNetPreProcessor(PreProcessor):
             pred = logits.argmax(dim=1).squeeze(0).cpu().numpy()
             conf = probs.max(dim=1).values.squeeze(0).cpu().numpy()
 
-        # Walkability mask
+        # Remove the reflect padding
+        pred = pred[:h_s, :w_s]
+        conf = conf[:h_s, :w_s]
+
+        # Walkability mask (optional confidence filtering when threshold set)
         walkable = np.isin(pred, list(self._walkable_classes))
-        walkable &= conf >= self._confidence_threshold
+        if self._confidence_threshold is not None:
+            walkable &= conf >= self._confidence_threshold
 
         # Up-scale back to original resolution
         if scale < 1.0:
@@ -232,8 +266,9 @@ class DroneUNetPreProcessor(PreProcessor):
             ).astype(bool)
             conf = cv2.resize(conf, (w_orig, h_orig), interpolation=cv2.INTER_LINEAR)
 
-        # Morphological cleanup + island removal
-        walkable = cleanup_mask(walkable, min_area=self._min_area)
+        # Optional morphological cleanup + island removal (disabled when None)
+        if self._min_area is not None:
+            walkable = cleanup_mask(walkable, min_area=self._min_area)
 
         segmentation = SegmentationMask(
             mask=walkable,

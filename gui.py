@@ -32,7 +32,17 @@ from data_ingestion import ImageData
 from graph_parsing import GraphParserFactory
 from post_processing import ImageDrawingPostProcessor
 from preprocessing import PreProcessorFactory
-from ros_bridge import RosBridgeConfig, RosBridgeFactory
+
+# The ROS 2 bridge is optional — it depends on the (not-yet-committed)
+# ``ros_bridge`` module and a working rclpy install. Import lazily so the GUI
+# still launches without it; the "Publish to ROS 2" option is inert if absent.
+try:
+    from ros_bridge import RosBridgeConfig, RosBridgeFactory
+
+    _ROS_AVAILABLE = True
+except ImportError:
+    RosBridgeConfig = RosBridgeFactory = None  # type: ignore[assignment]
+    _ROS_AVAILABLE = False
 
 DEFAULT_DATA_DIR = os.path.join("data", "rgb", "gloria")
 OUTPUT_DIR = "output"
@@ -152,6 +162,8 @@ def run_pipeline(
     folder, filename, start_pt, end_pt,
     preprocessor, algorithms, connectivity, weighted,
     robot_size, min_area, confidence, max_input_size, save_mask,
+    use_confidence, use_max_input, use_min_area,
+    rrt_step, rrt_max_iter,
     publish_ros, ros_image_topic, ros_path_topic, ros_frame_id, resolution_m_per_px,
 ):
     if not filename:
@@ -210,10 +222,20 @@ def run_pipeline(
                     max_input_size=int(max_input_size),
                 )
             elif preprocessor.startswith("drone_"):
-                kwargs = dict(
-                    confidence_threshold=confidence,
-                    max_input_size=int(max_input_size),
-                    min_area=int(min_area),
+                # Each optional step is enabled only when its box is ticked;
+                # omitting a kwarg leaves the preprocessor default (= disabled).
+                kwargs = {}
+                if use_confidence:
+                    kwargs["confidence_threshold"] = confidence
+                if use_max_input:
+                    kwargs["max_input_size"] = int(max_input_size)
+                if use_min_area:
+                    kwargs["min_area"] = int(min_area)
+                log(
+                    "  optional steps → "
+                    f"confidence={'on' if use_confidence else 'off'}, "
+                    f"max_input={'on' if use_max_input else 'off'}, "
+                    f"cleanup={'on' if use_min_area else 'off'}"
                 )
             elif preprocessor == "hsv_threshold":
                 kwargs = dict(min_area=int(min_area))
@@ -275,7 +297,13 @@ def run_pipeline(
         last_robot_path = None
 
         for algo_key in algorithms:
-            algo = AlgorithmFactory.create(algo_key, weighted=weighted)
+            algo_kwargs: dict = {"weighted": weighted}
+            if algo_key == "rrt":
+                algo_kwargs.update(
+                    step_size=float(rrt_step),
+                    max_iterations=int(rrt_max_iter),
+                )
+            algo = AlgorithmFactory.create(algo_key, **algo_kwargs)
             log(f"\n{'─' * 40}")
             log(f" {algo.name()}")
             log(f"{'─' * 40}")
@@ -289,9 +317,10 @@ def run_pipeline(
             rp = drawer.process(result, graph)
             last_robot_path = rp
             meta = result.metadata
+            explored = meta.get("nodes_explored", meta.get("iterations", "?"))
             log(f"  Path length:   {result.length} nodes")
             log(f"  Total cost:    {result.total_cost:.2f}")
-            log(f"  Explored:      {meta.get('nodes_explored', '?')}")
+            log(f"  Explored/iter: {explored}")
             log(f"  Time:          {meta.get('elapsed_seconds', 0):.4f}s")
             log(f"  Waypoints:     {rp.num_waypoints}")
             log(f"  Real distance: {rp.total_distance:.2f}")
@@ -300,7 +329,10 @@ def run_pipeline(
         log(f"\nOutput saved: {saved}")
 
         if publish_ros:
-            if last_robot_path is None:
+            if not _ROS_AVAILABLE:
+                log("\nSkipping ROS publish — the 'ros_bridge' module is not "
+                    "installed (it was not included in the merge).")
+            elif last_robot_path is None:
                 log("\nSkipping ROS publish — no algorithm produced a valid path.")
             else:
                 log("\nPublishing to ROS 2 …")
@@ -390,20 +422,33 @@ def build_app() -> gr.Blocks:
                     value=default_pre,
                     label="Preprocessor",
                 )
+                gr.Markdown(
+                    "_For `drone_*` models the three options below are **off "
+                    "by default** (raw model output). Tick a box to enable it._"
+                )
+                use_confidence_cb = gr.Checkbox(
+                    False, label="Use confidence threshold",
+                )
                 confidence_sl = gr.Slider(
                     0.0, 1.0, 0.5, step=0.05,
                     label="Confidence Threshold",
-                    info="Min softmax probability (segformer / deeplabv3)",
+                    info="Min softmax probability to keep a walkable pixel",
+                )
+                use_max_input_cb = gr.Checkbox(
+                    False, label="Use max input size",
                 )
                 max_input_sl = gr.Slider(
                     256, 2048, 1024, step=128,
                     label="Max Input Size (px)",
-                    info="Resize large images before inference",
+                    info="Resize before inference (off = original resolution)",
+                )
+                use_min_area_cb = gr.Checkbox(
+                    False, label="Use mask cleanup (min island area)",
                 )
                 min_area_sl = gr.Slider(
                     0, 10000, 1000, step=100,
                     label="Min Island Area (px)",
-                    info="Connected components smaller than this are removed",
+                    info="Morphology + removal of components smaller than this",
                 )
                 save_mask_cb = gr.Checkbox(True, label="Save mask to disk")
 
@@ -421,6 +466,14 @@ def build_app() -> gr.Blocks:
                     label="Algorithms",
                 )
                 weighted_cb = gr.Checkbox(True, label="Weighted search")
+
+                gr.Markdown("_RRT parameters (used only when RRT is selected)_")
+                rrt_step_sl = gr.Slider(
+                    2, 100, 20, step=1, label="RRT Step Size (px)",
+                )
+                rrt_maxiter_sl = gr.Slider(
+                    500, 20000, 5000, step=500, label="RRT Max Iterations",
+                )
 
                 gr.Markdown("### ROS 2 (ground robot)")
                 publish_ros_cb = gr.Checkbox(
@@ -492,6 +545,8 @@ def build_app() -> gr.Blocks:
                 folder_input, image_dd, start_state, end_state,
                 pre_dd, algo_dd, conn_radio, weighted_cb,
                 robot_sl, min_area_sl, confidence_sl, max_input_sl, save_mask_cb,
+                use_confidence_cb, use_max_input_cb, use_min_area_cb,
+                rrt_step_sl, rrt_maxiter_sl,
                 publish_ros_cb, ros_image_topic_tb, ros_path_topic_tb, ros_frame_tb,
                 ros_resolution_sl,
             ],

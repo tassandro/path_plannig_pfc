@@ -5,6 +5,7 @@ from .dijkstra import DijkstraAlgorithm
 from .entities import PathResult
 from .index import AlgorithmFactory
 from .interfaces import PathAlgorithm
+from .rrt import RRTAlgorithm
 
 __all__ = [
     "PathResult",
@@ -14,4 +15,5 @@ __all__ = [
     "DijkstraAlgorithm",
     "BFSAlgorithm",
     "DFSAlgorithm",
+    "RRTAlgorithm",
 ]
