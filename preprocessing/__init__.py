@@ -24,3 +24,10 @@ try:
     __all__.append("SegformerPreProcessor")
 except ImportError:
     pass
+
+try:
+    from .drone_unet_segmentation import DroneUNetPreProcessor
+
+    __all__.append("DroneUNetPreProcessor")
+except ImportError:
+    pass

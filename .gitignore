@@ -21,3 +21,6 @@ output/
 # Data (large image / point-cloud files)
 data/
 *.zip
+
+# Pre-trained segmentation checkpoints (downloaded via scripts/download_drone_models.py)
+models/

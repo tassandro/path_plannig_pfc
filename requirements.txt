@@ -4,6 +4,7 @@ opencv-python>=4.8
 torch>=2.0
 torchvision>=0.15
 transformers>=4.30
+<<<<<<< HEAD
 gradio
 
 # ROS 2 integration (--publish-ros / ros_bridge module) is OPTIONAL and not
@@ -20,3 +21,8 @@ gradio
 #   pip install "numpy<2"
 # (this is compatible with opencv-python/torch/transformers despite the
 # opencv-python>=2 metadata warning pip prints).
+=======
+segmentation-models-pytorch>=0.3,<0.5
+efficientnet-pytorch>=0.7
+gradio
+>>>>>>> 04982e1d3c4ffb1fb0fc1073aa32d003f1953934
