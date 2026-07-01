@@ -329,7 +329,10 @@ def run_pipeline(
         log(f"\nOutput saved: {saved}")
 
         if publish_ros:
-            if last_robot_path is None:
+            if not _ROS_AVAILABLE:
+                log("\nSkipping ROS publish — the 'ros_bridge' module is not "
+                    "installed (it was not included in the merge).")
+            elif last_robot_path is None:
                 log("\nSkipping ROS publish — no algorithm produced a valid path.")
             else:
                 log("\nPublishing to ROS 2 …")
