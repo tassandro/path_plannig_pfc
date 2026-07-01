@@ -34,6 +34,7 @@ from data_ingestion import ImageData
 from graph_parsing import GraphParserFactory
 from post_processing import ImageDrawingPostProcessor
 from preprocessing import PreProcessorFactory
+from ros_bridge import RosBridgeConfig, RosBridgeFactory
 
 
 def pixel_to_node(node_index_map: np.ndarray, x: int, y: int) -> int:
@@ -83,6 +84,27 @@ def main() -> None:
     parser.add_argument("--weight-limit", type=int, default=100)
     parser.add_argument("--save-mask", action="store_true", help="Save segmentation mask")
     parser.add_argument("--output-dir", default="output")
+    parser.add_argument(
+        "--publish-ros",
+        action="store_true",
+        help="Publish the annotated image and the path to ROS 2, so the "
+        "ground robot can receive them",
+    )
+    parser.add_argument(
+        "--ros-bridge", default="ros2", choices=RosBridgeFactory.available() or ["ros2"],
+        help="ROS bridge implementation to use with --publish-ros",
+    )
+    parser.add_argument("--ros-image-topic", default="/path_planning/annotated_image")
+    parser.add_argument("--ros-path-topic", default="/path_planning/path")
+    parser.add_argument("--ros-frame-id", default="map")
+    parser.add_argument("--ros-node-name", default="path_planning_bridge")
+    parser.add_argument(
+        "--resolution-m-per-px", type=float, default=1.0,
+        help="Ground sampling distance of the source image (meters per "
+        "pixel). Used to convert the path to real-world units when "
+        "publishing to ROS (--publish-ros), so waypoints line up with "
+        "the Gazebo/world frame instead of raw pixel coordinates.",
+    )
 
     args = parser.parse_args()
 
@@ -95,7 +117,7 @@ def main() -> None:
     if pixels is None:
         print(f"Error: could not load '{args.image}'")
         sys.exit(1)
-    data = ImageData(source_path=args.image, pixels=pixels)
+    data = ImageData(source_path=args.image, pixels=pixels, resolution_m_per_px=args.resolution_m_per_px)
     print(f"  Image size: {pixels.shape[1]}×{pixels.shape[0]}")
 
     # ── 2. Preprocess + Parse graph ───────────────────────────────────
@@ -155,6 +177,7 @@ def main() -> None:
     out_path = os.path.join(args.output_dir, f"{ts}.png")
 
     drawer = ImageDrawingPostProcessor(image=pixels, output_path=out_path)
+    last_robot_path = None
 
     for algo_key in args.algorithm:
         algo = AlgorithmFactory.create(algo_key, weighted=args.weighted)
@@ -168,6 +191,7 @@ def main() -> None:
             continue
 
         robot_path = drawer.process(path_result, graph)
+        last_robot_path = robot_path
 
         meta = path_result.metadata
         print(f"  Path nodes:      {path_result.length}")
@@ -180,6 +204,28 @@ def main() -> None:
     # ── 5. Save annotated image ───────────────────────────────────────
     saved = drawer.save()
     print(f"\nAnnotated image saved to: {saved}")
+
+    # ── 6. Publish to ROS (ground robot) ──────────────────────────────
+    if args.publish_ros:
+        if last_robot_path is None:
+            print("\nSkipping ROS publish — no algorithm produced a valid path.")
+        else:
+            print(f"\nPublishing to ROS ('{args.ros_bridge}') …")
+            try:
+                ros_config = RosBridgeConfig(
+                    node_name=args.ros_node_name,
+                    image_topic=args.ros_image_topic,
+                    path_topic=args.ros_path_topic,
+                    frame_id=args.ros_frame_id,
+                    resolution_m_per_px=args.resolution_m_per_px,
+                )
+                bridge = RosBridgeFactory.create(args.ros_bridge, config=ros_config)
+                with bridge:
+                    bridge.publish(image=drawer.result_image, robot_path=last_robot_path)
+                print(f"  Image published to: {args.ros_image_topic}")
+                print(f"  Path published to:  {args.ros_path_topic}")
+            except (RuntimeError, ValueError) as exc:
+                print(f"  ✗ Could not publish to ROS: {exc}")
 
 
 if __name__ == "__main__":
