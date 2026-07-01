@@ -32,6 +32,7 @@ from data_ingestion import ImageData
 from graph_parsing import GraphParserFactory
 from post_processing import ImageDrawingPostProcessor
 from preprocessing import PreProcessorFactory
+from ros_bridge import RosBridgeConfig, RosBridgeFactory
 
 DEFAULT_DATA_DIR = os.path.join("data", "rgb", "gloria")
 OUTPUT_DIR = "output"
@@ -151,6 +152,7 @@ def run_pipeline(
     folder, filename, start_pt, end_pt,
     preprocessor, algorithms, connectivity, weighted,
     robot_size, min_area, confidence, max_input_size, save_mask,
+    publish_ros, ros_image_topic, ros_path_topic, ros_frame_id, resolution_m_per_px,
 ):
     if not filename:
         return None, None, "No image selected."
@@ -264,6 +266,7 @@ def run_pipeline(
         ts = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         out_path = os.path.join(OUTPUT_DIR, f"{ts}.png")
         drawer = ImageDrawingPostProcessor(image=bgr, output_path=out_path)
+        last_robot_path = None
 
         for algo_key in algorithms:
             algo = AlgorithmFactory.create(algo_key, weighted=weighted)
@@ -278,6 +281,7 @@ def run_pipeline(
                 continue
 
             rp = drawer.process(result, graph)
+            last_robot_path = rp
             meta = result.metadata
             log(f"  Path length:   {result.length} nodes")
             log(f"  Total cost:    {result.total_cost:.2f}")
@@ -288,6 +292,26 @@ def run_pipeline(
 
         saved = drawer.save()
         log(f"\nOutput saved: {saved}")
+
+        if publish_ros:
+            if last_robot_path is None:
+                log("\nSkipping ROS publish — no algorithm produced a valid path.")
+            else:
+                log("\nPublishing to ROS 2 …")
+                try:
+                    ros_config = RosBridgeConfig(
+                        image_topic=ros_image_topic or "/path_planning/annotated_image",
+                        path_topic=ros_path_topic or "/path_planning/path",
+                        frame_id=ros_frame_id or "map",
+                        resolution_m_per_px=float(resolution_m_per_px or 1.0),
+                    )
+                    bridge = RosBridgeFactory.create("ros2", config=ros_config)
+                    with bridge:
+                        bridge.publish(image=drawer.result_image, robot_path=last_robot_path)
+                    log(f"  Image published to: {ros_config.image_topic}")
+                    log(f"  Path published to:  {ros_config.path_topic}")
+                except (RuntimeError, ValueError) as exc:
+                    log(f"  Could not publish to ROS: {exc}")
 
         result_bgr = cv2.imread(saved)
         result_rgb = cv2.cvtColor(result_bgr, cv2.COLOR_BGR2RGB)
@@ -392,6 +416,25 @@ def build_app() -> gr.Blocks:
                 )
                 weighted_cb = gr.Checkbox(True, label="Weighted search")
 
+                gr.Markdown("### ROS 2 (ground robot)")
+                publish_ros_cb = gr.Checkbox(
+                    False, label="Publish to ROS 2",
+                    info="Sends the annotated image (sensor_msgs/Image) and "
+                    "the path (nav_msgs/Path) to the ground robot",
+                )
+                ros_image_topic_tb = gr.Textbox(
+                    value="/path_planning/annotated_image", label="Image Topic",
+                )
+                ros_path_topic_tb = gr.Textbox(
+                    value="/path_planning/path", label="Path Topic",
+                )
+                ros_frame_tb = gr.Textbox(value="map", label="Frame ID")
+                ros_resolution_sl = gr.Slider(
+                    0.01, 5.0, 1.0, step=0.01, label="Resolution (m/px)",
+                    info="Meters per pixel — converts the path to real-world "
+                    "units so it lines up with the Gazebo/world frame",
+                )
+
                 run_btn = gr.Button("Run Pipeline", variant="primary", size="lg")
 
         gr.Markdown("---")
@@ -443,6 +486,8 @@ def build_app() -> gr.Blocks:
                 folder_input, image_dd, start_state, end_state,
                 pre_dd, algo_dd, conn_radio, weighted_cb,
                 robot_sl, min_area_sl, confidence_sl, max_input_sl, save_mask_cb,
+                publish_ros_cb, ros_image_topic_tb, ros_path_topic_tb, ros_frame_tb,
+                ros_resolution_sl,
             ],
             [result_img, mask_img, result_log],
         )
