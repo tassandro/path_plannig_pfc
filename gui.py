@@ -207,6 +207,12 @@ def run_pipeline(
                     confidence_threshold=confidence,
                     max_input_size=int(max_input_size),
                 )
+            elif preprocessor.startswith("drone_"):
+                kwargs = dict(
+                    confidence_threshold=confidence,
+                    max_input_size=int(max_input_size),
+                    min_area=int(min_area),
+                )
             elif preprocessor == "hsv_threshold":
                 kwargs = dict(min_area=int(min_area))
 

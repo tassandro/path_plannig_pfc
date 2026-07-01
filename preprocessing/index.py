@@ -55,3 +55,19 @@ try:
     PreProcessorFactory.register("segformer", SegformerPreProcessor)
 except ImportError:
     pass
+
+# One factory entry per backbone (checkpoint bound via partial); the
+# checkpoint files themselves are downloaded separately, so registration does
+# NOT require them to be present on disk.
+try:
+    from functools import partial
+
+    from .drone_unet_segmentation import DroneUNetPreProcessor, available_models
+
+    for _model in available_models():
+        PreProcessorFactory.register(
+            f"drone_{_model}",
+            partial(DroneUNetPreProcessor, model_name=_model),
+        )
+except ImportError:
+    pass

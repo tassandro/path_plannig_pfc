@@ -4,3 +4,5 @@ opencv-python>=4.8
 torch>=2.0
 torchvision>=0.15
 transformers>=4.30
+segmentation-models-pytorch>=0.3,<0.5
+efficientnet-pytorch>=0.7
