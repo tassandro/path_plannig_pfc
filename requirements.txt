@@ -4,6 +4,25 @@ opencv-python>=4.8
 torch>=2.0
 torchvision>=0.15
 transformers>=4.30
+<<<<<<< HEAD
+gradio
+
+# ROS 2 integration (--publish-ros / ros_bridge module) is OPTIONAL and not
+# pip-installable here — it requires a sourced ROS 2 environment providing:
+#   rclpy, sensor_msgs, nav_msgs, geometry_msgs, cv_bridge
+# e.g. on Ubuntu with ROS 2 Humble:
+#   sudo apt install ros-humble-desktop ros-humble-cv-bridge
+#   source /opt/ros/humble/setup.bash
+#
+# IMPORTANT when using --publish-ros: apt-installed cv_bridge (Humble) is
+# compiled against NumPy 1.x. If this venv's numpy is 2.x, importing
+# cv_bridge raises "AttributeError: _ARRAY_API not found" (may still work
+# in some setups, but is unreliable). Pin numpy<2 in that case, e.g.:
+#   pip install "numpy<2"
+# (this is compatible with opencv-python/torch/transformers despite the
+# opencv-python>=2 metadata warning pip prints).
+=======
 segmentation-models-pytorch>=0.3,<0.5
 efficientnet-pytorch>=0.7
 gradio
+>>>>>>> 04982e1d3c4ffb1fb0fc1073aa32d003f1953934
