@@ -1,0 +1,68 @@
+[0.000000] (-) TimerEvent: {}
+[0.001320] (ugv_bridge) JobQueued: {'identifier': 'ugv_bridge', 'dependencies': OrderedDict()}
+[0.002368] (ugv_bridge) JobStarted: {'identifier': 'ugv_bridge'}
+[0.097049] (-) TimerEvent: {}
+[0.198910] (-) TimerEvent: {}
+[0.299947] (-) TimerEvent: {}
+[0.401259] (-) TimerEvent: {}
+[0.502491] (-) TimerEvent: {}
+[0.603589] (-) TimerEvent: {}
+[0.704706] (-) TimerEvent: {}
+[0.805819] (-) TimerEvent: {}
+[0.907041] (-) TimerEvent: {}
+[1.008859] (-) TimerEvent: {}
+[1.110174] (-) TimerEvent: {}
+[1.211853] (-) TimerEvent: {}
+[1.313722] (-) TimerEvent: {}
+[1.415307] (-) TimerEvent: {}
+[1.516878] (-) TimerEvent: {}
+[1.618168] (-) TimerEvent: {}
+[1.719196] (-) TimerEvent: {}
+[1.820651] (-) TimerEvent: {}
+[1.924703] (-) TimerEvent: {}
+[2.026253] (-) TimerEvent: {}
+[2.127432] (-) TimerEvent: {}
+[2.229190] (-) TimerEvent: {}
+[2.331536] (-) TimerEvent: {}
+[2.432861] (-) TimerEvent: {}
+[2.534111] (-) TimerEvent: {}
+[2.635680] (-) TimerEvent: {}
+[2.736937] (-) TimerEvent: {}
+[2.769970] (ugv_bridge) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/ugv_bridge', 'build', '--build-base', '/mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/build/ugv_bridge/build', 'install', '--record', '/mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/build/ugv_bridge/install.log', '--install-scripts', '$base/lib/ugv_bridge', '--single-version-externally-managed', 'install_data'], 'cwd': '/mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/src/ugv_bridge', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'tassandro', 'SHLVL': '0', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib', 'MOTD_SHOWN': 'update-motd', 'HOME': '/home/tassandro', 'OLDPWD': '/mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc', 'ROS_PYTHON_VERSION': '3', 'PS1': '(pfc) \\[\\e]0;\\u@\\h: \\w\\a\\]${debian_chroot:+($debian_chroot)}\\[\\033[01;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'WSL_DISTRO_NAME': 'Ubuntu-22.04', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'humble', 'LOGNAME': 'tassandro', 'NAME': 'LapCartesius03', 'WSL_INTEROP': '/run/WSL/1062_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/tassandro/venvs/pfc/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Users/Admin/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand:/mnt/c/Users/Admin/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/copilotCli:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/WireGuard/:/mnt/c/Program Files/Git/cmd:/mnt/c/Users/Admin/AppData/Local/Programs/Python/Python313/Scripts/:/mnt/c/Users/Admin/AppData/Local/Programs/Python/Python313/:/mnt/c/Users/Admin/AppData/Local/Programs/Python/Launcher/:/mnt/c/Users/Admin/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/Admin/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/Admin/.vscode/extensions/ms-python.debugpy-2026.6.0-win32-x64/bundled/scripts/noConfigScripts:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'VIRTUAL_ENV_PROMPT': '(pfc)', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'AMENT_PREFIX_PATH': '/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'VIRTUAL_ENV': '/home/tassandro/venvs/pfc', 'PWD': '/mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/build/ugv_bridge', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/build/ugv_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/install/ugv_bridge/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'WSLENV': ''}, 'shell': False}
+[2.837054] (-) TimerEvent: {}
+[2.938259] (-) TimerEvent: {}
+[3.040589] (-) TimerEvent: {}
+[3.141499] (-) TimerEvent: {}
+[3.242320] (-) TimerEvent: {}
+[3.343358] (-) TimerEvent: {}
+[3.444884] (-) TimerEvent: {}
+[3.546157] (-) TimerEvent: {}
+[3.648578] (-) TimerEvent: {}
+[3.750130] (-) TimerEvent: {}
+[3.851154] (-) TimerEvent: {}
+[3.858893] (ugv_bridge) StderrLine: {'line': b"/usr/lib/python3/dist-packages/setuptools/dist.py:723: UserWarning: Usage of dash-separated 'script-dir' will not be supported in future versions. Please use the underscore name 'script_dir' instead\n"}
+[3.862937] (ugv_bridge) StderrLine: {'line': b'  warnings.warn(\n'}
+[3.895827] (ugv_bridge) StdoutLine: {'line': b'running egg_info\n'}
+[3.903937] (ugv_bridge) StdoutLine: {'line': b'creating ../../build/ugv_bridge/ugv_bridge.egg-info\n'}
+[3.910534] (ugv_bridge) StdoutLine: {'line': b'writing ../../build/ugv_bridge/ugv_bridge.egg-info/PKG-INFO\n'}
+[3.931719] (ugv_bridge) StdoutLine: {'line': b'writing dependency_links to ../../build/ugv_bridge/ugv_bridge.egg-info/dependency_links.txt\n'}
+[3.942172] (ugv_bridge) StdoutLine: {'line': b'writing entry points to ../../build/ugv_bridge/ugv_bridge.egg-info/entry_points.txt\n'}
+[3.951237] (-) TimerEvent: {}
+[3.956894] (ugv_bridge) StdoutLine: {'line': b'writing requirements to ../../build/ugv_bridge/ugv_bridge.egg-info/requires.txt\n'}
+[3.966244] (ugv_bridge) StdoutLine: {'line': b'writing top-level names to ../../build/ugv_bridge/ugv_bridge.egg-info/top_level.txt\n'}
+[3.979355] (ugv_bridge) StdoutLine: {'line': b"writing manifest file '../../build/ugv_bridge/ugv_bridge.egg-info/SOURCES.txt'\n"}
+[4.021080] (ugv_bridge) StdoutLine: {'line': b"reading manifest file '../../build/ugv_bridge/ugv_bridge.egg-info/SOURCES.txt'\n"}
+[4.051339] (-) TimerEvent: {}
+[4.095728] (ugv_bridge) StdoutLine: {'line': b"writing manifest file '../../build/ugv_bridge/ugv_bridge.egg-info/SOURCES.txt'\n"}
+[4.109603] (ugv_bridge) StdoutLine: {'line': b'running build\n'}
+[4.116197] (ugv_bridge) StdoutLine: {'line': b'running build_py\n'}
+[4.129447] (ugv_bridge) StdoutLine: {'line': b'creating /mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/build/ugv_bridge/build\n'}
+[4.138723] (ugv_bridge) StdoutLine: {'line': b'creating /mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/build/ugv_bridge/build/lib\n'}
+[4.147375] (ugv_bridge) StdoutLine: {'line': b'creating /mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/build/ugv_bridge/build/lib/ugv_bridge\n'}
+[4.156481] (-) TimerEvent: {}
+[4.184278] (ugv_bridge) StdoutLine: {'line': b'copying ugv_bridge/image_monitor_node.py -> /mnt/c/Users/Admin/Documents/pfc_novo/path_plannig_pfc/ros2_ws/build/ugv_bridge/build/lib/ugv_bridge\n'}
+[4.234472] (ugv_bridge) StderrLine: {'line': b'error: [Errno 1] Operation not permitted\n'}
+[4.256754] (-) TimerEvent: {}
+[4.272309] (ugv_bridge) CommandEnded: {'returncode': 1}
+[4.284998] (ugv_bridge) JobEnded: {'identifier': 'ugv_bridge', 'rc': 1}
+[4.348190] (-) EventReactorShutdown: {}

@@ -6,7 +6,6 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 dist/
-build/
 
 # IDE
 .vscode/
@@ -25,4 +24,5 @@ data/
 # Pre-trained segmentation checkpoints (downloaded via scripts/download_drone_models.py)
 models/
 
-**/log/
+**/log/latest
+**/log/latest_build
