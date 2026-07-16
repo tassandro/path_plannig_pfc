@@ -28,6 +28,7 @@ setup(
         "console_scripts": [
             "path_follower_node = ugv_bridge.path_follower_node:main",
             "image_monitor_node = ugv_bridge.image_monitor_node:main",
+            "tf_odom_bridge_node = ugv_bridge.tf_odom_bridge_node:main",
         ],
     },
 )

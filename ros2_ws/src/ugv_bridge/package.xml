@@ -17,8 +17,18 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>python3-opencv</exec_depend>
+
+  <!-- NOTE: jackal_bridge.launch.py can optionally start the Jackal (J100)
+       Gazebo simulation via the `clearpath_gz` package. It is intentionally
+       NOT declared as an exec_depend here (not a hard build/runtime
+       dependency of this package, and its rosdep key may not resolve on
+       every distro) — install it separately, see
+       https://github.com/clearpathrobotics/clearpath_simulator
+       (clone the branch matching your ROS distro, e.g. `humble`). -->
+
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
