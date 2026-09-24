@@ -105,6 +105,18 @@ def main() -> None:
         "publishing to ROS (--publish-ros), so waypoints line up with "
         "the Gazebo/world frame instead of raw pixel coordinates.",
     )
+    parser.add_argument(
+        "--origin-x-m", type=float, default=0.0,
+        help="World-frame X coordinate (meters) that pixel (0,0) of the "
+        "source image maps to. Use this when the image represents a "
+        "known Gazebo scenario not centered on the world origin (e.g. "
+        "an occupancy image generated from a .world/.sdf file).",
+    )
+    parser.add_argument(
+        "--origin-y-m", type=float, default=0.0,
+        help="World-frame Y coordinate (meters) that pixel (0,0) of the "
+        "source image maps to (see --origin-x-m).",
+    )
 
     # Optional segmentation post-processing (off by default for drone_* models).
     parser.add_argument(
@@ -257,6 +269,8 @@ def main() -> None:
                     path_topic=args.ros_path_topic,
                     frame_id=args.ros_frame_id,
                     resolution_m_per_px=args.resolution_m_per_px,
+                    origin_x_m=args.origin_x_m,
+                    origin_y_m=args.origin_y_m,
                 )
                 bridge = RosBridgeFactory.create(args.ros_bridge, config=ros_config)
                 with bridge:

@@ -165,6 +165,7 @@ def run_pipeline(
     use_confidence, use_max_input, use_min_area,
     rrt_step, rrt_max_iter,
     publish_ros, ros_image_topic, ros_path_topic, ros_frame_id, resolution_m_per_px,
+    origin_x_m, origin_y_m,
 ):
     if not filename:
         return None, None, "No image selected."
@@ -342,6 +343,8 @@ def run_pipeline(
                         path_topic=ros_path_topic or "/path_planning/path",
                         frame_id=ros_frame_id or "map",
                         resolution_m_per_px=float(resolution_m_per_px or 1.0),
+                        origin_x_m=float(origin_x_m or 0.0),
+                        origin_y_m=float(origin_y_m or 0.0),
                     )
                     bridge = RosBridgeFactory.create("ros2", config=ros_config)
                     with bridge:
@@ -493,6 +496,15 @@ def build_app() -> gr.Blocks:
                     info="Meters per pixel — converts the path to real-world "
                     "units so it lines up with the Gazebo/world frame",
                 )
+                with gr.Row():
+                    ros_origin_x_nb = gr.Number(
+                        value=0.0, label="Origin X (m)",
+                        info="World X of pixel (0,0), for scenarios not centered on the world origin",
+                    )
+                    ros_origin_y_nb = gr.Number(
+                        value=0.0, label="Origin Y (m)",
+                        info="World Y of pixel (0,0)",
+                    )
 
                 run_btn = gr.Button("Run Pipeline", variant="primary", size="lg")
 
@@ -548,7 +560,7 @@ def build_app() -> gr.Blocks:
                 use_confidence_cb, use_max_input_cb, use_min_area_cb,
                 rrt_step_sl, rrt_maxiter_sl,
                 publish_ros_cb, ros_image_topic_tb, ros_path_topic_tb, ros_frame_tb,
-                ros_resolution_sl,
+                ros_resolution_sl, ros_origin_x_nb, ros_origin_y_nb,
             ],
             [result_img, mask_img, result_log],
         )

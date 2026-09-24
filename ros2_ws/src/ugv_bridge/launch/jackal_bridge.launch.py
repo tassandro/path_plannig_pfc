@@ -63,7 +63,8 @@ sample, the real Jackal sim exposes:
 
     ros2 launch ugv_bridge jackal_bridge.launch.py \\
         cmd_vel_topic:=j100_0000/cmd_vel \\
-        odom_topic:=j100_0000/platform/odom/filtered
+        odom_topic:=j100_0000/platform/odom/filtered \\
+        use_tf_odom_bridge:=false
 
 Only set an empty namespace in ``robot.yaml`` if you want the
 un-namespaced defaults below (``/cmd_vel``, ``/odom``) to apply as-is.
@@ -141,6 +142,43 @@ def generate_launch_description() -> LaunchDescription:
     odom_frame_arg = DeclareLaunchArgument("odom_frame", default_value="odom")
     base_frame_arg = DeclareLaunchArgument("base_frame", default_value="base_link")
 
+    # Only needed as a fallback for robots/sims that don't expose a real
+    # nav_msgs/Odometry topic. Set to false when odom_topic already points at
+    # one (e.g. a namespaced robot.yaml's "<ns>/platform/odom/filtered") —
+    # otherwise this node becomes a second publisher on that same topic.
+    use_tf_odom_bridge_arg = DeclareLaunchArgument(
+        "use_tf_odom_bridge", default_value="true",
+        description=(
+            "Start tf_odom_bridge_node (republishes the odom->base_link TF "
+            "as Odometry). Set to false when odom_topic already points at a "
+            "real nav_msgs/Odometry publisher, to avoid two nodes publishing "
+            "on the same topic."
+        ),
+    )
+
+    # Optional: snap the robot to the path's first waypoint (via Gazebo's
+    # set_pose service) as soon as a new path is received, instead of
+    # driving there from wherever it currently is (e.g. its spawn pose).
+    teleport_to_start_arg = DeclareLaunchArgument(
+        "teleport_to_start", default_value="false",
+        description=(
+            "Teleport the robot to the path's first waypoint on every new "
+            "path (via 'ign service .../set_pose'), instead of driving "
+            "there normally. Requires gz_entity_name to be set."
+        ),
+    )
+    gz_world_arg = DeclareLaunchArgument(
+        "gz_world", default_value=LaunchConfiguration("world"),
+        description="Gazebo world name, used for the set_pose service when teleport_to_start:=true.",
+    )
+    gz_entity_name_arg = DeclareLaunchArgument(
+        "gz_entity_name", default_value="",
+        description=(
+            "Gazebo entity name to teleport when teleport_to_start:=true, "
+            "e.g. 'j100_0000/robot' for a namespaced Jackal robot.yaml."
+        ),
+    )
+
     jackal_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution(
@@ -166,6 +204,7 @@ def generate_launch_description() -> LaunchDescription:
             "base_frame": LaunchConfiguration("base_frame"),
             "odom_topic": LaunchConfiguration("odom_topic"),
         }],
+        condition=IfCondition(LaunchConfiguration("use_tf_odom_bridge")),
     )
 
     path_follower = Node(
@@ -177,6 +216,9 @@ def generate_launch_description() -> LaunchDescription:
             "path_topic": LaunchConfiguration("path_topic"),
             "odom_topic": LaunchConfiguration("odom_topic"),
             "cmd_vel_topic": LaunchConfiguration("cmd_vel_topic"),
+            "teleport_to_start": LaunchConfiguration("teleport_to_start"),
+            "gz_world": LaunchConfiguration("gz_world"),
+            "gz_entity_name": LaunchConfiguration("gz_entity_name"),
         }],
     )
 
@@ -202,6 +244,10 @@ def generate_launch_description() -> LaunchDescription:
         odom_topic_arg,
         odom_frame_arg,
         base_frame_arg,
+        use_tf_odom_bridge_arg,
+        teleport_to_start_arg,
+        gz_world_arg,
+        gz_entity_name_arg,
         jackal_sim,
         tf_odom_bridge,
         path_follower,
