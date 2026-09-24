@@ -120,8 +120,8 @@ class Ros2ImagePathPublisher(RosPublisher):
                 pose = PoseStamped()
                 pose.header.stamp = stamp
                 pose.header.frame_id = cfg.frame_id
-                pose.pose.position.x = float(wp.x) * res
-                pose.pose.position.y = float(-wp.y if cfg.flip_y else wp.y) * res
+                pose.pose.position.x = float(wp.x) * res + cfg.origin_x_m
+                pose.pose.position.y = float(-wp.y if cfg.flip_y else wp.y) * res + cfg.origin_y_m
                 pose.pose.position.z = float(wp.z) * res
                 heading = -wp.heading if cfg.flip_y else wp.heading
                 pose.pose.orientation.z = sin(heading / 2.0)

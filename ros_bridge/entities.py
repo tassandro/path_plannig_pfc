@@ -44,6 +44,16 @@ class RosBridgeConfig:
         Image row coordinates grow downward, while ROS world frames
         (REP 103) grow "up"/left-handed. When ``True`` (default) the Y
         axis is negated during the pixel→meters conversion.
+    origin_x_m : float
+    origin_y_m : float
+        World-frame coordinates (meters, in ``frame_id``) that pixel
+        ``(0, 0)`` of the source image maps to. Added *after* the
+        ``resolution_m_per_px``/``flip_y`` conversion. Needed whenever
+        the image does not represent a patch of the world centered on
+        its own origin (e.g. an occupancy image generated from a known
+        Gazebo world, where pixel (0, 0) corresponds to some arbitrary
+        world coordinate, not ``(0, 0)``). Defaults to ``0.0`` (no
+        offset), matching the previous behaviour.
     wait_for_subscribers_sec : float
         How long to wait (polling for DDS discovery) for at least one
         subscriber to match before publishing. The pipeline is a
@@ -70,6 +80,8 @@ class RosBridgeConfig:
     latched: bool = True
     resolution_m_per_px: float = 1.0
     flip_y: bool = True
+    origin_x_m: float = 0.0
+    origin_y_m: float = 0.0
     wait_for_subscribers_sec: float = 3.0
     publish_grace_sec: float = 0.5
     extra: dict = field(default_factory=dict)
