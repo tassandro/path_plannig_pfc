@@ -324,7 +324,9 @@ def run_pipeline(
             log(f"  Explored/iter: {explored}")
             log(f"  Time:          {meta.get('elapsed_seconds', 0):.4f}s")
             log(f"  Waypoints:     {rp.num_waypoints}")
-            log(f"  Real distance: {rp.total_distance:.2f}")
+            res_m = float(resolution_m_per_px or 1.0)
+            log(f"  Real distance: {rp.total_distance:.2f} px"
+                f" ({rp.total_distance * res_m:.2f} m)")
 
         saved = drawer.save()
         log(f"\nOutput saved: {saved}")

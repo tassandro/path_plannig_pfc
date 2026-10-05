@@ -250,7 +250,8 @@ def main() -> None:
         print(f"  Explored/iter:   {explored}")
         print(f"  Time:            {meta.get('elapsed_seconds', 0):.4f}s")
         print(f"  Robot waypoints: {robot_path.num_waypoints}")
-        print(f"  Real distance:   {robot_path.total_distance:.2f}")
+        print(f"  Real distance:   {robot_path.total_distance:.2f} px"
+              f" ({robot_path.total_distance * args.resolution_m_per_px:.2f} m)")
 
     # ── 5. Save annotated image ───────────────────────────────────────
     saved = drawer.save()
